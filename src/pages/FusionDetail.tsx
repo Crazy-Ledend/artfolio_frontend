@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getFusionMap } from '../api/client'
 import type { FusionArtwork, FusionMap, Pokemon } from '../types'
+import { usePokemonList } from '../hooks/usePokemonList'
 import styles from './FusionDetail.module.css'
 
 const SPRITE_BASE = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon'
@@ -27,38 +28,22 @@ export default function FusionDetail() {
   const { poke1, poke2 } = useParams<{ poke1: string; poke2: string }>()
   const navigate = useNavigate()
 
+  const { pokemon: allPokemon, loading: pokeLoading } = usePokemonList()
   const [fusionMap, setFusionMap] = useState<FusionMap>({})
-  const [allPokemon, setAllPokemon] = useState<Pokemon[]>([])
+  const [fusionLoading, setFusionLoading] = useState(true)
   const [loading, setLoading] = useState(true)
   const [activeIdx, setActiveIdx] = useState(0)
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        const [countData, fusionsData] = await Promise.all([
-          fetch('https://pokeapi.co/api/v2/pokemon?limit=1').then(r => r.json()),
-          getFusionMap(),
-        ])
-        const count = countData.count ?? 1500
-        const listData = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${count}&offset=0`).then(r => r.json())
-        const list: Pokemon[] = listData.results
-          .map((p: { name: string; url: string }) => {
-            const id = parseInt(p.url.replace(/\/+$/, '').split('/').pop() ?? '0')
-            return { id, name: p.name, sprite: homeSprite(id), spriteHome: homeSprite(id), fallback: `${SPRITE_BASE}/${id}.png` }
-          })
-          .filter((p: Pokemon) => {
-            if (p.id <= 1025) return true
-            if (REGIONAL.some(s => p.name.endsWith(s))) return true
-            if (SKIP.some(s => p.name.includes(s))) return false
-            return REGIONAL.some(s => p.name.includes(s))
-          })
-        setAllPokemon(list)
-        setFusionMap(fusionsData.fusions ?? {})
-      } catch { }
-      finally { setLoading(false) }
-    }
-    load()
+    getFusionMap()
+      .then(data => setFusionMap(data.fusions ?? {}))
+      .catch(() => {})
+      .finally(() => setFusionLoading(false))
   }, [])
+
+  useEffect(() => {
+    setLoading(pokeLoading || fusionLoading)
+  }, [pokeLoading, fusionLoading])
 
   if (loading) return (
     <div className={styles.page}>

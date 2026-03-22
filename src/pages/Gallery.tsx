@@ -1,80 +1,26 @@
 import { useState, useEffect, useCallback } from 'react'
+import { usePokemonList } from '../hooks/usePokemonList'
 import { useNavigate } from 'react-router-dom'
 import { getFusionMap } from '../api/client'
-import type { Pokemon, FusionMap } from '../types'
+import type { FusionMap, Pokemon } from '../types'
 import styles from './Gallery.module.css'
 
 export default function Gallery() {
   const navigate = useNavigate()
-  const [pokemon, setPokemon] = useState<Pokemon[]>([])
+  const { pokemon, loading: pokeLoading } = usePokemonList()
   const [fusionMap, setFusionMap] = useState<FusionMap>({})
-  const [loading, setLoading] = useState(true)
+  const [fusionLoading, setFusionLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const loading = pokeLoading || fusionLoading
 
   useEffect(() => {
     getFusionMap()
       .then(data => setFusionMap(data.fusions ?? {}))
       .catch(() => setFusionMap({}))
+      .finally(() => setFusionLoading(false))
   }, [])
 
-  useEffect(() => {
-    const fetchAll = async () => {
-      setLoading(true)
-      try {
-        // Fetch count first, then fetch everything (includes regional forms)
-        const countRes = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1')
-        const { count } = await countRes.json()
-        const res = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${count}&offset=0`)
-        const data = await res.json()
-        const spriteBase = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon'
 
-        const allEntries = data.results.map((p: { name: string; url: string }) => {
-          const id = parseInt(p.url.replace(/\/+$/, '').split('/').pop() ?? '0')
-          const sprite = id <= 1025
-            ? `${spriteBase}/other/home/${id}.png`
-            : `${spriteBase}/other/official-artwork/${id}.png`
-          return {
-            id,
-            name: p.name,
-            sprite,
-            spriteHome: sprite,
-            fallback: `${spriteBase}/${id}.png`,
-          }
-        })
-
-        // Keep base forms (id <= 1025) + regional forms (names with - suffix like marowak-alola)
-        // Filter out mega, gmax, totem, primal, alolan/galarian/paldean dupes, gender variants etc
-        const REGIONAL_SUFFIXES = ['-alola', '-galar', '-hisui', '-paldea']
-        const SKIP_PATTERNS = ['-mega', '-gmax', '-totem', '-primal', '-origin', '-sky',
-          '-land', '-incarnate', '-therian', '-black', '-white', '-resolute', '-ordinary',
-          '-aria', '-pirouette', '-baile', '-pom-pom', '-pau', '-sensu', '-dusk', '-midnight',
-          '-original', '-ash', '-battle-bond', '-power-construct', '-complete', '-school',
-          '-disguised', '-busted', '-hangry', '-gorging', '-single-strike', '-rapid-strike',
-          '-ice', '-shadow', '-crowned', '-eternamax', '-roaming', '-f', '-m',
-          '-red-striped', '-blue-striped', '-white-striped', '-male', '-female',
-          '-amped', '-low-key', '-curly', '-droopy', '-stretchy',
-          '-full-belly', '-hero', '-teal', '-aqua', '-blaze', '-stellar']
-
-        const list: Pokemon[] = allEntries.filter((p: Pokemon) => {
-          // Always include base forms (id 1–1025)
-          if (p.id <= 1025) return true
-          // Include regional forms
-          if (REGIONAL_SUFFIXES.some(s => p.name.endsWith(s))) return true
-          // Skip everything else (megas, gmax, alternate forms, etc)
-          if (SKIP_PATTERNS.some(s => p.name.includes(s))) return false
-          // Skip pure number-suffixed forms like rattata-alola already handled above
-          // Keep anything else regional that slipped through
-          return REGIONAL_SUFFIXES.some(s => p.name.includes(s))
-        })
-        setPokemon(list)
-      } catch {
-        setPokemon([])
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchAll()
-  }, [])
 
   const hasFusion = useCallback((name: string) =>
     name in fusionMap && fusionMap[name].length > 0
