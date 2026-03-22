@@ -77,12 +77,14 @@
 .searchClear:hover { color: var(--ink-700); }
 
 /* ── Grid — same style as home ── */
-.gridWrap { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 8px 8px 32px; max-width: 960px; width: 100%; margin: 0 auto; box-sizing: border-box; }
+.gridWrap { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 8px 4px 32px; max-width: 960px; width: 100%; margin: 0 auto; box-sizing: border-box; }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 4px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 3px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 @media (min-width: 480px) {
