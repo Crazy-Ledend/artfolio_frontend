@@ -344,7 +344,20 @@ function CollectionsTab({ secret }: { secret: string }) {
           <div><label className={styles.fieldLabel}>Name</label><input value={form.name} onChange={e => { setF('name', e.target.value); setF('slug', autoSlug(e.target.value)) }} className={styles.input} /></div>
           <div><label className={styles.fieldLabel}>Slug</label><input value={form.slug} onChange={e => setF('slug', e.target.value)} className={styles.input} /></div>
           <div><label className={styles.fieldLabel}>Description</label><textarea value={form.description} onChange={e => setF('description', e.target.value)} rows={2} className={styles.textarea} /></div>
-          <div><label className={styles.fieldLabel}>Cover GDrive file ID</label><input value={form.cover_gdrive_file_id} onChange={e => setF('cover_gdrive_file_id', e.target.value)} className={styles.input} placeholder="Optional" /></div>
+          <div>
+              <label className={styles.fieldLabel}>Cover image (GDrive URL or file ID)</label>
+              <input
+                value={form.cover_gdrive_file_id}
+                onChange={e => {
+                  const val = e.target.value
+                  // Extract file ID from GDrive URL if pasted
+                  const match = val.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]{20,})/)
+                  setF('cover_gdrive_file_id', match ? match[1] : val)
+                }}
+                className={styles.input}
+                placeholder="Paste Google Drive link or file ID"
+              />
+            </div>
           <button onClick={handleCreate} disabled={saving || !form.name || !form.slug} className={styles.btnPrimary} style={{ width: 'fit-content' }}>
             {saving ? 'Creating…' : 'Create'}
           </button>

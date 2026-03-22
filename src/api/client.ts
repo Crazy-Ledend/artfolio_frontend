@@ -30,6 +30,9 @@ export const deleteArtwork = (id: string, secret: string): Promise<void> =>
 
 // ── Collections ───────────────────────────────────────────
 
+export const getCollection = (id: string): Promise<Collection> =>
+  api.get(`/collections/${id}`).then(r => r.data)
+
 export const getCollections = (): Promise<Collection[]> =>
   api.get('/collections').then(r => r.data)
 

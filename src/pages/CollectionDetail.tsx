@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { getArtworks, getCollections } from '../api/client'
+import { getCollection, getArtworks } from '../api/client'
 import type { Artwork, Collection } from '../types'
 import styles from './CollectionDetail.module.css'
 
@@ -12,18 +12,21 @@ export default function CollectionDetail() {
   const [collection, setCollection] = useState<Collection | null>(null)
   const [artworks, setArtworks] = useState<Artwork[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   useEffect(() => {
+    if (!id) return
+    setLoading(true)
+    setError(false)
     Promise.all([
-      getCollections(),
+      getCollection(id),
       getArtworks({ collection_id: id, limit: 100 }),
     ])
-      .then(([cols, arts]) => {
-        const col = (Array.isArray(cols) ? cols : []).find(c => c.id === id)
-        setCollection(col ?? null)
+      .then(([col, arts]) => {
+        setCollection(col)
         setArtworks(Array.isArray(arts?.items) ? arts.items : [])
       })
-      .catch(() => {})
+      .catch(() => setError(true))
       .finally(() => setLoading(false))
   }, [id])
 
@@ -36,6 +39,15 @@ export default function CollectionDetail() {
     </div>
   )
 
+  if (error || !collection) return (
+    <div className={styles.page}>
+      <div className={styles.notFound}>
+        <button onClick={() => navigate('/collections')} className={styles.backBtn}>← Back</button>
+        <p className={styles.emptyText}>Collection not found</p>
+      </div>
+    </div>
+  )
+
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
@@ -44,20 +56,25 @@ export default function CollectionDetail() {
         </button>
 
         {/* Header */}
-        {collection && (
-          <div className={styles.header}>
-            {collection.cover_url && (
-              <img src={collection.cover_url} alt={collection.name} className={styles.headerCover} referrerPolicy="no-referrer" />
+        <div className={styles.header}>
+          {collection.cover_url && (
+            <img
+              src={collection.cover_url}
+              alt={collection.name}
+              className={styles.headerCover}
+              referrerPolicy="no-referrer"
+            />
+          )}
+          <div className={styles.headerInfo}>
+            <h1 className={styles.headerName}>{collection.name}</h1>
+            {collection.description && (
+              <p className={styles.headerDesc}>{collection.description}</p>
             )}
-            <div className={styles.headerInfo}>
-              <h1 className={styles.headerName}>{collection.name}</h1>
-              {collection.description && <p className={styles.headerDesc}>{collection.description}</p>}
-              <span className={styles.headerCount}>{artworks.length} works</span>
-            </div>
+            <span className={styles.headerCount}>{artworks.length} works</span>
           </div>
-        )}
+        </div>
 
-        {/* Artworks grid */}
+        {/* Grid */}
         {artworks.length === 0 ? (
           <div className={styles.empty}>
             <p className={styles.emptyText}>No artworks in this collection yet</p>
@@ -74,20 +91,14 @@ export default function CollectionDetail() {
   )
 }
 
-function ArtworkCard({ art, navigate }: { art: Artwork; navigate: (path: string) => void }) {
+function ArtworkCard({ art, navigate }: { art: Artwork; navigate: (p: string) => void }) {
   const [imgLoaded, setImgLoaded] = useState(false)
   const hasFusions = Array.isArray(art.fusions) && art.fusions.length >= 2
-
-  const handleClick = () => {
-    if (hasFusions) {
-      navigate(`/fusion/${art.fusions[0]}/${art.fusions[1]}`)
-    }
-  }
 
   return (
     <div
       className={`${styles.card} ${hasFusions ? styles['card--clickable'] : ''}`}
-      onClick={hasFusions ? handleClick : undefined}
+      onClick={() => hasFusions && navigate(`/fusion/${art.fusions[0]}/${art.fusions[1]}`)}
     >
       <div className={styles.cardImg}>
         {!imgLoaded && <div className={styles.skeleton} />}
@@ -110,7 +121,7 @@ function ArtworkCard({ art, navigate }: { art: Artwork; navigate: (path: string)
         {(art.medium || art.year) && (
           <p className={styles.cardMeta}>{[art.medium, art.year].filter(Boolean).join(' · ')}</p>
         )}
-        {art.tags.length > 0 && (
+        {art.tags?.length > 0 && (
           <div className={styles.cardTags}>
             {art.tags.map(t => <span key={t} className={styles.tag}>{t}</span>)}
           </div>
