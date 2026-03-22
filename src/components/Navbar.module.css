@@ -1,0 +1,81 @@
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 40;
+  padding: 10px 16px 0;
+}
+
+.navbar__inner {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 2px solid var(--glass-border);
+  border-radius: 20px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  max-width: 1280px;
+  margin: 0 auto;
+  box-shadow: 0 3px 16px var(--shadow);
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.navbar__brand {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 22px; font-weight: 600;
+  color: var(--ink-800);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: color 0.15s, transform 0.15s;
+}
+.navbar__brand:hover { color: var(--accent); transform: scale(1.04); }
+
+.navbar__nav { display: flex; align-items: center; gap: 4px; }
+
+.navbar__link {
+  padding: 6px 14px; border-radius: 12px;
+  font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 600;
+  color: var(--ink-600); text-decoration: none;
+  transition: background 0.15s, transform 0.15s, color 0.15s;
+}
+.navbar__link:hover { background: var(--glass-bg); transform: translateY(-1px); color: var(--ink-800); }
+
+.navbar__link--active {
+  background: var(--ink-700);
+  color: var(--canvas);
+  box-shadow: 0 2px 8px var(--shadow);
+}
+.navbar__link--active:hover { background: var(--ink-800); }
+
+.navbar__btn {
+  padding: 6px 14px; border-radius: 12px;
+  font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 600;
+  color: var(--ink-600); background: none; border: none; cursor: pointer;
+  transition: background 0.15s, transform 0.15s, color 0.15s;
+}
+.navbar__btn:hover { background: var(--glass-bg); transform: translateY(-1px); color: var(--ink-800); }
+
+.navbar__admin {
+  padding: 5px 12px; border-radius: 12px;
+  font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 700;
+  color: var(--ink-400); text-decoration: none;
+  border: 2px solid var(--glass-border);
+  transition: background 0.15s, color 0.15s;
+}
+.navbar__admin:hover { background: var(--glass-bg); color: var(--ink-600); }
+
+/* Theme toggle */
+.themeToggle {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  border: 2px solid var(--glass-border);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink-600);
+  transition: background 0.15s, transform 0.2s, color 0.15s;
+  flex-shrink: 0;
+}
+.themeToggle:hover { background: var(--glass-input); transform: rotate(20deg) scale(1.1); color: var(--accent); }

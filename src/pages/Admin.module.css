@@ -1,0 +1,53 @@
+.page { min-height: 100vh; background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-mid) 40%, var(--bg-end) 100%); padding-top: 72px; transition: background 0.3s; }
+.inner { max-width: 1280px; margin: 0 auto; padding: 28px 24px; }
+.topRow { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.heading { font-family: 'Fredoka', sans-serif; font-size: 36px; font-weight: 600; color: var(--ink-800); }
+.signout { font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 600; color: var(--ink-300); background: none; border: none; cursor: pointer; transition: color 0.15s; }
+.signout:hover { color: var(--ink-600); }
+.tabs { display: flex; gap: 4px; margin-bottom: 24px; border-bottom: 2px solid var(--glass-border); }
+.tab { padding: 8px 18px; font-family: 'Fredoka', sans-serif; font-size: 16px; font-weight: 500; text-transform: capitalize; background: none; border: none; border-bottom: 3px solid transparent; margin-bottom: -2px; cursor: pointer; color: var(--ink-300); transition: color 0.15s, border-color 0.15s; }
+.tab:hover { color: var(--ink-600); }
+.tab--active { color: var(--ink-800); border-bottom-color: var(--ink-700); }
+.card { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 2px solid var(--glass-border); border-radius: 16px; padding: 18px 22px; margin-bottom: 18px; transition: background 0.3s; }
+.formGrid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+@media (min-width: 640px) { .formGrid { grid-template-columns: 1fr 1fr; } }
+.fieldLabel { display: block; font-family: 'Nunito', sans-serif; font-size: 10px; font-weight: 700; color: var(--ink-400); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+.input, .select, .textarea { width: 100%; background: var(--glass-input); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 2px solid var(--glass-border); border-radius: 10px; padding: 7px 10px; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 600; color: var(--ink-800); outline: none; transition: border-color 0.15s, background 0.15s; }
+.input:focus, .select:focus, .textarea:focus { border-color: var(--accent); }
+.textarea { resize: none; }
+.colSpan2 { grid-column: span 2; }
+.btnPrimary { padding: 8px 18px; background: var(--ink-700); color: var(--canvas); font-family: 'Fredoka', sans-serif; font-size: 15px; font-weight: 500; border: none; border-radius: 10px; cursor: pointer; transition: background 0.15s, transform 0.15s; }
+.btnPrimary:hover { background: var(--ink-800); transform: translateY(-1px); }
+.btnPrimary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.btnSecondary { padding: 8px 18px; background: var(--glass-bg); border: 2px solid var(--glass-border); color: var(--ink-600); font-family: 'Fredoka', sans-serif; font-size: 15px; font-weight: 500; border-radius: 10px; cursor: pointer; transition: background 0.15s; }
+.btnSecondary:hover { background: var(--glass-input); }
+.btnAdd { padding: 8px 16px; background: var(--ink-700); color: var(--canvas); font-family: 'Fredoka', sans-serif; font-size: 14px; font-weight: 500; border: none; border-radius: 10px; cursor: pointer; transition: background 0.15s, transform 0.15s; }
+.btnAdd:hover { background: var(--ink-800); transform: translateY(-1px); }
+.countsRow { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.countLabel { font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 600; color: var(--ink-400); }
+.listRow { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: var(--glass-bg); border: 2px solid var(--glass-border); border-radius: 12px; transition: background 0.15s; }
+.listRow:hover { background: var(--glass-input); }
+.listThumb { width: 38px; height: 38px; object-fit: cover; border-radius: 8px; background: var(--glass-bg); flex-shrink: 0; }
+.listInfo { flex: 1; min-width: 0; }
+.listTitle { font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700; color: var(--ink-800); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.listMeta { font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 500; color: var(--ink-400); }
+.listActions { display: flex; gap: 8px; flex-shrink: 0; }
+.linkBtn { font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 700; background: none; border: none; cursor: pointer; color: var(--ink-400); transition: color 0.15s; }
+.linkBtn:hover { color: var(--ink-700); }
+.linkBtnDanger { font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 700; background: none; border: none; cursor: pointer; color: #e74c3c; opacity: 0.6; transition: opacity 0.15s; }
+.linkBtnDanger:hover { opacity: 1; }
+.errorBanner { padding: 10px 14px; border-radius: 12px; border: 2px solid rgba(231,76,60,0.3); background: rgba(231,76,60,0.08); font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 600; color: #e74c3c; margin-bottom: 14px; }
+.formError { font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 600; color: #e74c3c; margin-top: 5px; }
+.messageCard { padding: 12px 14px; border-radius: 14px; border: 2px solid var(--glass-border); background: var(--glass-bg); }
+.messageCard--unread { background: var(--glass-input); border-color: var(--accent); }
+.messageSender { font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700; color: var(--ink-800); }
+.messageSenderMuted { font-weight: 500; color: var(--ink-400); }
+.messageSubject { font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 600; color: var(--ink-400); margin-top: 2px; }
+.messageDate { font-family: 'Silkscreen', monospace; font-size: 10px; color: var(--ink-300); flex-shrink: 0; }
+.messageText { font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 500; color: var(--ink-600); line-height: 1.6; margin-top: 8px; }
+.messageEmpty { font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 600; color: var(--ink-300); }
+.loginWrap { min-height: 100vh; background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-mid) 40%, var(--bg-end) 100%); display: flex; align-items: center; justify-content: center; padding: 16px; transition: background 0.3s; }
+.loginCard { background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 2px solid var(--glass-border); border-radius: 24px; padding: 30px; width: 100%; max-width: 340px; box-shadow: 0 6px 28px var(--shadow); }
+.loginTitle { font-family: 'Fredoka', sans-serif; font-size: 28px; font-weight: 500; color: var(--ink-800); margin-bottom: 18px; }
+.skeleton { height: 46px; border-radius: 12px; background: var(--glass-bg); animation: shimmer 1.3s ease-in-out infinite; }
+@keyframes shimmer { 0%,100%{opacity:0.3} 50%{opacity:0.7} }

@@ -1,0 +1,55 @@
+.wrap { display: flex; flex-direction: column; gap: 6px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 5px; }
+
+.chip {
+  display: flex; align-items: center; gap: 4px;
+  padding: 3px 8px 3px 4px; border-radius: 20px;
+  background: var(--glass-input); border: 2px solid var(--glass-border);
+  font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 700;
+  color: var(--ink-700);
+}
+
+.chipSprite { width: 24px; height: 24px; object-fit: contain; image-rendering: pixelated; }
+
+.chipRemove {
+  background: none; border: none; cursor: pointer;
+  color: var(--ink-400); font-size: 14px; line-height: 1;
+  padding: 0 0 0 2px; transition: color 0.15s;
+}
+.chipRemove:hover { color: #e74c3c; }
+
+.inputWrap { position: relative; }
+
+.input {
+  width: 100%;
+  background: var(--glass-input); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border: 2px solid var(--glass-border); border-radius: 10px;
+  padding: 7px 11px; font-family: 'Nunito', sans-serif;
+  font-size: 13px; font-weight: 600; color: var(--ink-800);
+  outline: none; transition: border-color 0.15s;
+}
+.input::placeholder { color: var(--ink-300); font-weight: 400; }
+.input:focus { border-color: var(--accent); }
+
+.dropdown {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 100;
+  background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 2px solid var(--glass-border); border-radius: 12px;
+  overflow: hidden; box-shadow: 0 8px 24px var(--shadow);
+}
+
+.option {
+  width: 100%; display: flex; align-items: center; gap: 8px;
+  padding: 7px 12px; background: none; border: none; cursor: pointer;
+  font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 600;
+  color: var(--ink-700); text-align: left;
+  transition: background 0.1s;
+  border-bottom: 1px solid var(--glass-border);
+}
+.option:last-child { border-bottom: none; }
+.option:hover { background: var(--glass-input); }
+
+.optionSprite { width: 28px; height: 28px; object-fit: contain; image-rendering: pixelated; flex-shrink: 0; }
+
+.optionNum { margin-left: auto; font-family: 'Silkscreen', monospace; font-size: 9px; color: var(--ink-400); }
