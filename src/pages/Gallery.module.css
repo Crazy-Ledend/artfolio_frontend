@@ -134,6 +134,18 @@
   cursor: default;
 }
 
+.tile--inactive:hover {
+  transform: scale(1.1);
+  background: var(--glass-bg);
+  border-radius: 12px;
+  padding: 6px 4px 4px;
+  /* outline renders outside the box, not affected by border shorthand */
+  outline: 2px solid rgba(255, 255, 255, 0.45);
+  outline-offset: 0px;
+  box-shadow: 0 6px 20px var(--shadow), inset 0 0 0 2px rgba(255,255,255,0.45);
+  z-index: 10;
+}
+
 .tile--active {
   filter: none;
   opacity: 1;
