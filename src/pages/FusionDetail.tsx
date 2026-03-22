@@ -5,23 +5,6 @@ import type { Pokemon, FusionArtwork, FusionMap } from '../types'
 import { usePokemonList } from '../hooks/usePokemonList'
 import styles from './FusionDetail.module.css'
 
-const SPRITE_BASE = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon'
-const REGIONAL = ['-alola', '-galar', '-hisui', '-paldea']
-const SKIP = ['-mega', '-gmax', '-totem', '-primal', '-origin', '-sky', '-land',
-  '-incarnate', '-therian', '-black', '-white', '-resolute', '-ordinary', '-aria',
-  '-pirouette', '-baile', '-pom-pom', '-pau', '-sensu', '-dusk', '-midnight',
-  '-original', '-ash', '-battle-bond', '-power-construct', '-complete', '-school',
-  '-disguised', '-busted', '-hangry', '-gorging', '-single-strike', '-rapid-strike',
-  '-ice', '-shadow', '-crowned', '-eternamax', '-roaming', '-f', '-m',
-  '-red-striped', '-blue-striped', '-white-striped', '-male', '-female',
-  '-amped', '-low-key', '-curly', '-droopy', '-stretchy',
-  '-full-belly', '-hero', '-teal', '-aqua', '-blaze', '-stellar']
-
-function homeSprite(id: number) {
-  return id <= 1025
-    ? `${SPRITE_BASE}/other/home/${id}.png`
-    : `${SPRITE_BASE}/other/official-artwork/${id}.png`
-}
 function capitalize(s: string) { return s.charAt(0).toUpperCase() + s.slice(1) }
 
 export default function FusionDetail() {
@@ -31,7 +14,6 @@ export default function FusionDetail() {
   const { pokemon: allPokemon, loading: pokeLoading } = usePokemonList()
   const [fusionMap, setFusionMap] = useState<FusionMap>({})
   const [fusionLoading, setFusionLoading] = useState(true)
-  const [loading, setLoading] = useState(true)
   const [activeIdx, setActiveIdx] = useState(0)
 
   useEffect(() => {
@@ -41,9 +23,7 @@ export default function FusionDetail() {
       .finally(() => setFusionLoading(false))
   }, [])
 
-  useEffect(() => {
-    setLoading(pokeLoading || fusionLoading)
-  }, [pokeLoading, fusionLoading])
+  const loading = pokeLoading || fusionLoading
 
   if (loading) return (
     <div className={styles.page}>
@@ -58,27 +38,28 @@ export default function FusionDetail() {
   const poke1Data = getPoke(poke1 ?? '')
   const poke2Data = getPoke(poke2 ?? '')
 
-  // Primary artworks: fusionMap[poke1] that include poke2 (order-specific)
-  const primarySeen = new Set<string>()
-  const artworks: FusionArtwork[] = (fusionMap[poke1 ?? ''] ?? [])
-    .filter(a => a.fusions.includes(poke2 ?? ''))
-    .filter(a => { if (primarySeen.has(a.id)) return false; primarySeen.add(a.id); return true })
+  // Dedupe helper
+  const dedup = (list: FusionArtwork[]) => {
+    const ids = new Set<string>()
+    return list.filter(a => ids.has(a.id) ? false : (ids.add(a.id), true))
+  }
 
-  // Related — ALL artworks featuring BOTH pokes (any order) not already in primary
-  const relatedSeen = new Set<string>(primarySeen)
-  const allBothPokes: FusionArtwork[] = [
+  // All artworks containing BOTH pokemon (deduped)
+  const allBoth = dedup([
+    ...(fusionMap[poke1 ?? ''] ?? []).filter(a => a.fusions.includes(poke2 ?? '')),
     ...(fusionMap[poke2 ?? ''] ?? []).filter(a => a.fusions.includes(poke1 ?? '')),
-  ].filter(a => { if (relatedSeen.has(a.id)) return false; relatedSeen.add(a.id); return true })
+  ])
 
-  // Also include artworks featuring either poke individually
-  const otherSeen = new Set<string>(relatedSeen)
-  const otherRelated: FusionArtwork[] = [
-    ...(fusionMap[poke1 ?? ''] ?? []),
-    ...(fusionMap[poke2 ?? ''] ?? []),
-  ].filter(a => { if (otherSeen.has(a.id)) return false; otherSeen.add(a.id); return true })
+  // Primary: artworks where poke1 is listed first
+  const artworks = allBoth.filter(a => a.fusions[0] === poke1)
 
-  // related = reversed-order fusions first, then other individual fusions
-  const related = [...allBothPokes, ...otherRelated].slice(0, 12)
+  // Related: everything else — reversed pair first, then singles
+  const primaryIds = new Set(artworks.map(a => a.id))
+  const related = dedup([
+    ...allBoth.filter(a => !primaryIds.has(a.id)),         // reversed pairs
+    ...(fusionMap[poke1 ?? ''] ?? []),                      // other poke1 fusions
+    ...(fusionMap[poke2 ?? ''] ?? []),                      // other poke2 fusions
+  ]).filter(a => !primaryIds.has(a.id)).slice(0, 12)
 
   const active = artworks[activeIdx] ?? artworks[0]
 
@@ -86,14 +67,13 @@ export default function FusionDetail() {
     <div className={styles.page}>
       <div className={styles.notFound}>
         <button onClick={() => navigate(`/pokemon/${poke1}`)} className={styles.backBtn}>← Back</button>
-        <p className={styles.notFoundText}>No fusion found</p>
+        <p className={styles.notFoundText}>No fusion found for {capitalize(poke1 ?? '')} × {capitalize(poke2 ?? '')}</p>
       </div>
     </div>
   )
 
   return (
     <div className={styles.page}>
-      {/* ── Hero: fusion artwork ── */}
       <div className={styles.hero}>
         <button onClick={() => navigate(`/pokemon/${poke1}`)} className={styles.backBtn}>
           ← Back to {capitalize(poke1 ?? '')}
@@ -123,7 +103,7 @@ export default function FusionDetail() {
           )}
         </div>
 
-        {/* Info below hero */}
+        {/* Info */}
         {active && (
           <div className={styles.heroInfo}>
             <h1 className={styles.heroTitle}>{active.title}</h1>
@@ -143,23 +123,81 @@ export default function FusionDetail() {
         )}
       </div>
 
-      {/* ── Multiple artworks — thumbnail strip ── */}
-      {artworks.length > 1 && (
+      {/* ── Related fusions strip — always shown if related exist ── */}
+      {related.length > 0 && (
         <div className={styles.strip}>
           <div className={styles.stripInner}>
             <p className={styles.stripLabel}>RELATED FUSIONS</p>
             <div className={styles.stripGrid}>
-                {artworks.map((art, i) => (
+              {/* Other artworks in this same primary set (multiple bulbasaur+ivysaur) */}
+              {artworks.length > 1 && artworks.map((art, i) => (
                 <button
-                    key={art.id}
-                    onClick={() => setActiveIdx(i)}
-                    className={`${styles.thumb} ${i === activeIdx ? styles['thumb--active'] : ''}`}
+                  key={art.id}
+                  onClick={() => setActiveIdx(i)}
+                  className={`${styles.thumb} ${i === activeIdx ? styles['thumb--current'] : styles['thumb--active']}`}
+                  title={art.title}
                 >
-                    <img src={art.image_url} alt={art.title} referrerPolicy="no-referrer" />
+                  <img src={art.image_url} alt={art.title} referrerPolicy="no-referrer" />
+                  <span className={styles.thumbLabel}>{art.fusions.map(capitalize).join('+')}</span>
                 </button>
-                ))}
+              ))}
+              {/* Related artworks */}
+              {related.map(art => {
+                const dest = `/fusion/${art.fusions[0]}/${art.fusions[1] ?? ''}`
+                return (
+                  <button
+                    key={art.id}
+                    onClick={() => navigate(dest)}
+                    className={styles.thumb}
+                    title={art.title}
+                  >
+                    <img src={art.image_url} alt={art.title} referrerPolicy="no-referrer" />
+                    <span className={styles.thumbLabel}>{art.fusions.map(capitalize).join('+')}</span>
+                  </button>
+                )
+              })}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* ── More with section ── */}
+      {related.length > 0 && (
+        <div className={styles.related}>
+          <div className={styles.relatedHeader}>
+            <span className={styles.relatedLabel}>MORE WITH</span>
+            <div className={styles.relatedPokes}>
+              {[poke1Data, poke2Data].map(p => (
+                <button
+                  key={p.name}
+                  onClick={() => navigate(`/pokemon/${p.name}`)}
+                  className={styles.relatedPokeBtn}
+                  title={`See all fusions with ${capitalize(p.name)}`}
+                >
+                  <img src={p.sprite} alt={p.name} className={styles.relatedPokeSprite}
+                    onError={e => { const img = e.target as HTMLImageElement; if (p.fallback && img.src !== p.fallback) img.src = p.fallback }} />
+                  <span>{capitalize(p.name)}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+          {/* <div className={styles.relatedGrid}>
+            {related.map(art => (
+              <button
+                key={art.id}
+                onClick={() => navigate(`/fusion/${art.fusions[0]}/${art.fusions[1] ?? ''}`)}
+                className={styles.relatedCard}
+              >
+                <div className={styles.relatedImgWrap}>
+                  <img src={art.image_url} alt={art.title} referrerPolicy="no-referrer" className={styles.relatedImg} />
+                </div>
+                <div className={styles.relatedInfo}>
+                  <p className={styles.relatedTitle}>{art.title}</p>
+                  <p className={styles.relatedFusions}>{art.fusions.map(capitalize).join(' + ')}</p>
+                </div>
+              </button>
+            ))}
+          </div> */}
         </div>
       )}
     </div>

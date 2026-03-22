@@ -7,6 +7,7 @@ import Admin from './pages/Admin'
 import Profile from './pages/Profile'
 import PokemonDetail from './pages/PokemonDetail'
 import FusionDetail from './pages/FusionDetail'
+import CollectionDetail from './pages/CollectionDetail'
 import ContactModal from './components/ContactModal'
 
 export default function App() {
@@ -23,6 +24,7 @@ export default function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/pokemon/:name" element={<PokemonDetail />} />
           <Route path="/fusion/:poke1/:poke2" element={<FusionDetail />} />
+          <Route path="/collections/:id" element={<CollectionDetail />} />
         </Routes>
       </div>
       {contactOpen && <ContactModal onClose={() => setContactOpen(false)} />}
