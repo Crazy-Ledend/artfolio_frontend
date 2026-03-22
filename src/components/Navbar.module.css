@@ -79,3 +79,62 @@
   flex-shrink: 0;
 }
 .themeToggle:hover { background: var(--glass-input); transform: rotate(20deg) scale(1.1); color: var(--accent); }
+
+/* ── Mobile ── */
+.mobileRight {
+  display: none;
+  align-items: center;
+  gap: 6px;
+}
+
+@media (max-width: 600px) {
+  .navbar__nav { display: none; }
+  .mobileRight { display: flex; }
+}
+
+.menuWrap { position: relative; }
+
+.hamburger {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--glass-bg); border: 2px solid var(--glass-border);
+  cursor: pointer; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 4px;
+  padding: 0; transition: background 0.15s;
+}
+.hamburger:hover { background: var(--glass-input); }
+.hamburger span {
+  display: block; width: 16px; height: 2px;
+  background: var(--ink-700); border-radius: 2px;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  transform-origin: center;
+}
+.hamburger--open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.hamburger--open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger--open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+.dropdown {
+  position: absolute; top: calc(100% + 8px); right: 0;
+  min-width: 180px; z-index: 100;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 2px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 6px;
+  box-shadow: 0 8px 32px var(--shadow);
+  animation: dropIn 0.2s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes dropIn { from{opacity:0;transform:scale(0.95) translateY(-6px)} to{opacity:1;transform:scale(1) translateY(0)} }
+
+.dropItem {
+  display: block; width: 100%; text-align: left;
+  padding: 10px 14px; border-radius: 10px;
+  font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700;
+  color: var(--ink-700); text-decoration: none;
+  background: none; border: none; cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.dropItem:hover { background: var(--glass-input); color: var(--ink-800); }
+.dropItem--active { background: var(--ink-700); color: var(--canvas); }
+.dropItem--active:hover { background: var(--ink-800); color: var(--canvas); }
+
+.dropDivider { height: 1px; background: var(--glass-border); margin: 4px 6px; }
