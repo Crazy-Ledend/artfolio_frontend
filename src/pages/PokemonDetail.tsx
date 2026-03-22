@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getFusionMap } from '../api/client'
-import type { Pokemon, FusionMap } from '../types'
+import type { FusionMap } from '../types'
+import { usePokemonList } from '../hooks/usePokemonList'
 import styles from './PokemonDetail.module.css'
 
 const SPRITE_BASE = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon'
@@ -27,38 +28,17 @@ export default function PokemonDetail() {
   const { name } = useParams<{ name: string }>()
   const navigate = useNavigate()
 
-  const [allPokemon, setAllPokemon] = useState<Pokemon[]>([])
+  const { pokemon: allPokemon, loading: pokeLoading } = usePokemonList()
   const [fusionMap, setFusionMap] = useState<FusionMap>({})
-  const [loading, setLoading] = useState(true)
+  const [fusionLoading, setFusionLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const loading = pokeLoading || fusionLoading
 
   useEffect(() => {
-    const load = async () => {
-      setLoading(true)
-      try {
-        const [countData, fusionsData] = await Promise.all([
-          fetch('https://pokeapi.co/api/v2/pokemon?limit=1').then(r => r.json()),
-          getFusionMap(),
-        ])
-        const count = countData.count ?? 1500
-        const listData = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${count}&offset=0`).then(r => r.json())
-        const list: Pokemon[] = listData.results
-          .map((p: { name: string; url: string }) => {
-            const id = parseInt(p.url.replace(/\/+$/, '').split('/').pop() ?? '0')
-            return { id, name: p.name, sprite: homeSprite(id), spriteHome: homeSprite(id), fallback: `${SPRITE_BASE}/${id}.png` }
-          })
-          .filter((p: Pokemon) => {
-            if (p.id <= 1025) return true
-            if (REGIONAL.some(s => p.name.endsWith(s))) return true
-            if (SKIP.some(s => p.name.includes(s))) return false
-            return REGIONAL.some(s => p.name.includes(s))
-          })
-        setAllPokemon(list)
-        setFusionMap(fusionsData.fusions ?? {})
-      } catch { }
-      finally { setLoading(false) }
-    }
-    load()
+    getFusionMap()
+      .then(data => setFusionMap(data.fusions ?? {}))
+      .catch(() => {})
+      .finally(() => setFusionLoading(false))
   }, [])
 
   const poke = allPokemon.find(p => p.name === name)

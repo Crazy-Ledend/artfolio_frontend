@@ -1,0 +1,73 @@
+.page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-mid) 40%, var(--bg-end) 100%);
+  padding-top: 62px; transition: background 0.3s;
+}
+.loadingWrap { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 60vh; gap: 12px; }
+.spinner { width: 36px; height: 36px; border-radius: 50%; border: 3px solid var(--glass-border); border-top-color: var(--accent); animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loadingText { font-family: 'Silkscreen',monospace; font-size: 11px; color: var(--ink-400); letter-spacing: 0.1em; }
+
+.inner { max-width: 960px; margin: 0 auto; padding: 16px 16px 48px; display: flex; flex-direction: column; gap: 20px; }
+
+.backBtn {
+  align-self: flex-start; font-family: 'Nunito',sans-serif; font-size: 13px; font-weight: 700;
+  color: var(--ink-500); background: var(--glass-bg); border: 2px solid var(--glass-border);
+  border-radius: 10px; padding: 6px 14px; cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+}
+.backBtn:hover { background: var(--glass-input); transform: translateX(-2px); }
+
+/* Header */
+.header {
+  display: flex; gap: 20px; align-items: center;
+  background: rgba(255,255,255,0.18); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border: 2px solid rgba(255,255,255,0.35); border-radius: 22px; padding: 20px;
+  animation: fadeUp 0.4s ease both;
+}
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+.headerCover {
+  width: 100px; height: 100px; border-radius: 14px; object-fit: cover;
+  flex-shrink: 0; box-shadow: 0 4px 16px var(--shadow);
+}
+.headerInfo { display: flex; flex-direction: column; gap: 6px; }
+.headerName { font-family: 'Fredoka',sans-serif; font-size: 28px; font-weight: 600; color: var(--ink-800); line-height: 1.1; }
+.headerDesc { font-family: 'Nunito',sans-serif; font-size: 14px; font-weight: 500; color: var(--ink-500); line-height: 1.5; }
+.headerCount { font-family: 'Silkscreen',monospace; font-size: 9px; letter-spacing: 0.1em; color: var(--ink-400); }
+
+.empty { display: flex; align-items: center; justify-content: center; padding: 60px; }
+.emptyText { font-family: 'Fredoka',sans-serif; font-size: 20px; color: var(--ink-300); }
+
+/* Grid */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+
+@media (max-width: 600px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
+
+.card {
+  background: rgba(255,255,255,0.18); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border: 2px solid rgba(255,255,255,0.35); border-radius: 18px; overflow: hidden;
+  transition: transform 0.28s cubic-bezier(0.16,1,0.3,1), box-shadow 0.28s;
+}
+.card--clickable { cursor: pointer; }
+.card--clickable:hover { transform: translateY(-4px); box-shadow: 0 10px 28px var(--shadow); }
+
+.cardImg { position: relative; aspect-ratio: 1; background: rgba(255,255,255,0.1); overflow: hidden; }
+.skeleton { position: absolute; inset: 0; background: rgba(255,255,255,0.1); animation: shimmer 1.2s ease-in-out infinite; }
+@keyframes shimmer { 0%,100%{opacity:0.3} 50%{opacity:0.7} }
+.img { width: 100%; height: 100%; object-fit: contain; opacity: 0; transition: opacity 0.3s; }
+.img--loaded { opacity: 1; }
+
+.fusionBadge {
+  position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,0.55); backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.2); border-radius: 20px;
+  padding: 3px 10px; white-space: nowrap;
+  font-family: 'Nunito',sans-serif; font-size: 11px; font-weight: 700; color: #fff;
+}
+
+.cardBody { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 4px; }
+.cardTitle { font-family: 'Fredoka',sans-serif; font-size: 18px; font-weight: 600; color: var(--ink-800); }
+.cardMeta { font-family: 'Silkscreen',monospace; font-size: 9px; color: var(--ink-400); letter-spacing: 0.08em; }
+.cardTags { display: flex; flex-wrap: wrap; gap: 4px; }
+.tag { padding: 2px 8px; border-radius: 20px; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.4); font-family: 'Nunito',sans-serif; font-size: 10px; font-weight: 700; color: var(--ink-600); }

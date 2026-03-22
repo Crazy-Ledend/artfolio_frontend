@@ -43,7 +43,7 @@ export default function Collections() {
 
 function CollectionCard({ collection }: { collection: Collection }) {
   return (
-    <Link to={`/?collection_id=${collection.id}`} className={styles.card}>
+    <Link to={`/collections/${collection.id}`} className={styles.card}>
       <div className={styles.cardCover}>
         {collection.cover_url ? (
           <img src={collection.cover_url} alt={collection.name} referrerPolicy="no-referrer" loading="lazy" />

@@ -121,15 +121,30 @@
 .stripGrid { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
 
 .thumb {
-  width: 130px; height: 130px; border-radius: 16px; overflow: hidden;
+  width: 130px; border-radius: 16px; overflow: hidden;
   background: rgba(255,255,255,0.18); border: 2px solid rgba(255,255,255,0.35);
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 3px 12px var(--shadow);
   cursor: pointer; transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), border-color 0.2s, box-shadow 0.2s;
+  display: flex; flex-direction: column;
 }
-.thumb img { width: 100%; height: 100%; object-fit: contain; }
+.thumb img { width: 100%; aspect-ratio: 1; object-fit: contain; }
 .thumb:hover { transform: scale(1.06) translateY(-2px); border-color: rgba(255,255,255,0.6); box-shadow: 0 8px 20px var(--shadow); }
-.thumb--active { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent), 0 4px 14px var(--shadow); transform: scale(1.04); }
+/* Currently viewing — accent border */
+.thumb--current {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent), 0 4px 14px var(--shadow);
+  transform: scale(1.04);
+}
+/* Active but not current (same pair multiple artworks) */
+.thumb--active { border-color: rgba(255,255,255,0.6); }
+
+.thumbLabel {
+  padding: 4px 8px 6px;
+  font-family: 'Silkscreen',monospace; font-size: 7px; letter-spacing: 0.06em;
+  color: var(--ink-400); text-align: center;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
 
 /* ── Related artworks ── */
 .related {

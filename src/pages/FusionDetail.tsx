@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getFusionMap } from '../api/client'
-import type { FusionArtwork, FusionMap, Pokemon } from '../types'
+import type { Pokemon, FusionArtwork, FusionMap } from '../types'
 import { usePokemonList } from '../hooks/usePokemonList'
 import styles from './FusionDetail.module.css'
 
@@ -58,27 +58,27 @@ export default function FusionDetail() {
   const poke1Data = getPoke(poke1 ?? '')
   const poke2Data = getPoke(poke2 ?? '')
 
-  // Find ALL artworks containing BOTH pokemon — regardless of fusion order
-  const fusionSeen = new Set<string>()
-  const artworks: FusionArtwork[] = [
-    ...(fusionMap[poke1 ?? ''] ?? []).filter(a => a.fusions.includes(poke2 ?? '')),
-    ...(fusionMap[poke2 ?? ''] ?? []).filter(a => a.fusions.includes(poke1 ?? '')),
-  ].filter(a => {
-    if (fusionSeen.has(a.id)) return false
-    fusionSeen.add(a.id)
-    return true
-  })
+  // Primary artworks: fusionMap[poke1] that include poke2 (order-specific)
+  const primarySeen = new Set<string>()
+  const artworks: FusionArtwork[] = (fusionMap[poke1 ?? ''] ?? [])
+    .filter(a => a.fusions.includes(poke2 ?? ''))
+    .filter(a => { if (primarySeen.has(a.id)) return false; primarySeen.add(a.id); return true })
 
-  // Related — artworks featuring either pokemon but NOT already shown above
-  const relatedSeen = new Set<string>(fusionSeen)
-  const related: FusionArtwork[] = [
+  // Related — ALL artworks featuring BOTH pokes (any order) not already in primary
+  const relatedSeen = new Set<string>(primarySeen)
+  const allBothPokes: FusionArtwork[] = [
+    ...(fusionMap[poke2 ?? ''] ?? []).filter(a => a.fusions.includes(poke1 ?? '')),
+  ].filter(a => { if (relatedSeen.has(a.id)) return false; relatedSeen.add(a.id); return true })
+
+  // Also include artworks featuring either poke individually
+  const otherSeen = new Set<string>(relatedSeen)
+  const otherRelated: FusionArtwork[] = [
     ...(fusionMap[poke1 ?? ''] ?? []),
     ...(fusionMap[poke2 ?? ''] ?? []),
-  ].filter(a => {
-    if (relatedSeen.has(a.id)) return false
-    relatedSeen.add(a.id)
-    return true
-  }).slice(0, 8)
+  ].filter(a => { if (otherSeen.has(a.id)) return false; otherSeen.add(a.id); return true })
+
+  // related = reversed-order fusions first, then other individual fusions
+  const related = [...allBothPokes, ...otherRelated].slice(0, 12)
 
   const active = artworks[activeIdx] ?? artworks[0]
 
