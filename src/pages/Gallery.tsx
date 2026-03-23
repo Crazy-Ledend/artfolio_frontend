@@ -94,11 +94,11 @@ export default function Gallery() {
         {/* Bottom strip */}
         <div className={styles.dexBottom}>
           <span className={styles.dexCounter}>{loading ? 'LOADING...' : `${filtered.length} POKÉMON`}</span>
-          <div className={styles.dexNav}>
+          {/* <div className={styles.dexNav}>
             {[0,1,2,3,4].map(i => (
               <div key={i} className={`${styles.navDot} ${i === 2 ? styles['navDot--active'] : ''}`} />
             ))}
-          </div>
+          </div> */}
           <span className={styles.dexCounter}>{Object.keys(fusionMap).length} FUSED</span>
         </div>
       </div>
