@@ -65,3 +65,16 @@ export const getProfile = (): Promise<ArtistProfile> =>
 
 export const updateProfile = (data: Partial<ProfileFormData>, secret: string): Promise<{ ok: boolean }> =>
   api.put('/profile', data, { headers: { 'x-admin-secret': secret } }).then(r => r.data)
+
+// ── Fusion Requests ───────────────────────────────────────
+
+import type { FusionRequest } from '../types'
+
+export const requestFusion = (poke1: string, poke2: string): Promise<{ id: string; votes: number }> =>
+  api.post('/fusion-requests', { poke1, poke2 }).then(r => r.data)
+
+export const getFusionRequests = (secret: string): Promise<FusionRequest[]> =>
+  api.get('/fusion-requests', { headers: { 'x-admin-secret': secret } }).then(r => r.data)
+
+export const deleteFusionRequest = (id: string, secret: string): Promise<void> =>
+  api.delete(`/fusion-requests/${id}`, { headers: { 'x-admin-secret': secret }, }).then(() => {});
