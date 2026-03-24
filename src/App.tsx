@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Gallery from './pages/Gallery'
@@ -12,6 +12,11 @@ import ContactModal from './components/ContactModal'
 
 export default function App() {
   const [contactOpen, setContactOpen] = useState(false)
+
+  // Wake up Render backend immediately on app load
+  useEffect(() => {
+    fetch('/api/ping').catch(() => {})
+  }, [])
 
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
