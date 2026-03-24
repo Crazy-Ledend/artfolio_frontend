@@ -5,12 +5,12 @@ import {
 } from '../api/client'
 import type { Artwork, Collection, ContactRecord, ArtworkFormData, CollectionFormData } from '../types'
 import PokemonPicker from '../components/PokemonPicker'
-import { getProfile, updateProfile } from '../api/client'
-import type { ArtistProfile, SocialLink } from '../types'
+import { getProfile, updateProfile, getFusionRequests, deleteFusionRequest } from '../api/client'
+import type { ArtistProfile, SocialLink, FusionRequest } from '../types'
 import styles from './Admin.module.css'
 
 const SECRET_KEY = 'artfolio_admin_secret'
-type Tab = 'artworks' | 'collections' | 'messages' | 'profile'
+type Tab = 'artworks' | 'collections' | 'messages' | 'profile' | 'requests'
 
 export default function Admin() {
   const [secret, setSecret] = useState(() => sessionStorage.getItem(SECRET_KEY) ?? '')
@@ -58,7 +58,7 @@ export default function Admin() {
         </div>
 
         <div className={styles.tabs}>
-          {(['artworks', 'collections', 'messages', 'profile'] as Tab[]).map(t => (
+          {(['artworks', 'collections', 'messages', 'requests', 'profile'] as Tab[]).map(t => (
             <button key={t} onClick={() => setTab(t)} className={`${styles.tab} ${tab === t ? styles['tab--active'] : ''}`}>
               {t}
             </button>
@@ -69,6 +69,7 @@ export default function Admin() {
         {tab === 'collections' && <CollectionsTab secret={secret} />}
         {tab === 'messages'    && <MessagesTab secret={secret} />}
         {tab === 'profile'     && <ProfileTab secret={secret} />}
+        {tab === 'requests'    && <RequestsTab secret={secret} />}
       </div>
     </div>
   )
@@ -502,6 +503,96 @@ function ProfileTab({ secret }: { secret: string }) {
           </div>
         </div>
       </div>
+    </div>
+  )
+}
+
+// ── Requests Tab ──────────────────────────────────────────
+
+const SPRITE_BASE = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon'
+const _reqPokeIds: Record<string, number> = {}
+
+function RequestsTab({ secret }: { secret: string }) {
+  const [requests, setRequests] = useState<FusionRequest[]>([])
+  const [loading, setLoading] = useState(true)
+  const [pokeIds, setPokeIds] = useState<Record<string, number>>({})
+
+  useEffect(() => {
+    // Load poke IDs for sprites
+    fetch('https://pokeapi.co/api/v2/pokemon?limit=1300')
+      .then(r => r.json())
+      .then(d => {
+        const map: Record<string, number> = {}
+        d.results.forEach((p: { name: string; url: string }, i: number) => {
+          map[p.name] = parseInt(p.url.replace(/\/+$/, '').split('/').pop() ?? String(i + 1))
+        })
+        setPokeIds(map)
+      })
+      .catch(() => {})
+  }, [])
+
+  const load = () => {
+    getFusionRequests(secret)
+      .then(r => setRequests(Array.isArray(r) ? r : []))
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }
+  useEffect(() => { load() }, [secret])
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Remove this request?')) return
+    await deleteFusionRequest(id, secret)
+    load()
+  }
+
+  const sprite = (name: string) => {
+    const id = pokeIds[name]
+    if (!id) return `${SPRITE_BASE}/${name}.png`
+    return id <= 1025
+      ? `${SPRITE_BASE}/other/home/${id}.png`
+      : `${SPRITE_BASE}/other/official-artwork/${id}.png`
+  }
+
+  if (loading) return <div style={{ padding: 24, color: 'var(--ink-400)', fontFamily: 'Nunito' }}>Loading…</div>
+
+  return (
+    <div>
+      <div className={styles.countsRow}>
+        <span className={styles.countLabel}>{requests.length} fusion requests</span>
+        <button onClick={load} className={styles.btnSecondary}>Refresh</button>
+      </div>
+
+      {requests.length === 0 ? (
+        <p style={{ fontFamily: 'Nunito,sans-serif', fontSize: 14, color: 'var(--ink-400)', padding: '20px 0' }}>
+          No fusion requests yet.
+        </p>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 10 }}>
+          {requests.map(req => (
+            <div key={req.id} className={styles.card} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, padding: '16px 12px' }}>
+              {/* Sprites */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <img src={sprite(req.poke1)} alt={req.poke1} style={{ width: 56, height: 56, objectFit: 'contain' }} />
+                <span style={{ fontFamily: 'Fredoka,sans-serif', fontSize: 20, color: 'var(--ink-400)' }}>+</span>
+                <img src={sprite(req.poke2)} alt={req.poke2} style={{ width: 56, height: 56, objectFit: 'contain' }} />
+              </div>
+              {/* Names */}
+              <p style={{ fontFamily: 'Fredoka,sans-serif', fontSize: 15, fontWeight: 600, color: 'var(--ink-800)', textAlign: 'center', lineHeight: 1.2 }}>
+                {req.poke1.charAt(0).toUpperCase() + req.poke1.slice(1)}<br/>
+                <span style={{ color: 'var(--ink-400)', fontSize: 13 }}>+</span><br/>
+                {req.poke2.charAt(0).toUpperCase() + req.poke2.slice(1)}
+              </p>
+              {/* Votes */}
+              <span style={{ fontFamily: 'Silkscreen,monospace', fontSize: 10, color: 'var(--accent)', letterSpacing: '0.08em' }}>
+                {req.votes} {req.votes === 1 ? 'request' : 'requests'}
+              </span>
+              <button onClick={() => handleDelete(req.id)} className={styles.linkBtnDanger} style={{ fontSize: 12 }}>
+                Dismiss
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

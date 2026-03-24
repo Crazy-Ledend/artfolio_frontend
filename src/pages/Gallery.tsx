@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { usePokemonList } from '../hooks/usePokemonList'
 import { useNavigate } from 'react-router-dom'
 import { getFusionMap } from '../api/client'
-import type { FusionMap, Pokemon } from '../types'
+import type { Pokemon, FusionMap } from '../types'
 import styles from './Gallery.module.css'
 
 export default function Gallery() {
@@ -83,7 +83,7 @@ export default function Gallery() {
                     key={poke.id}
                     poke={poke}
                     active={hasFusion(poke.name)}
-                    onClick={() => hasFusion(poke.name) && navigate(`/pokemon/${poke.name}`)}
+                    onClick={() => navigate(`/pokemon/${poke.name}`)}
                   />
                 ))}
               </div>

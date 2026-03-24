@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { getFusionMap } from '../api/client'
+import { getFusionMap, requestFusion } from '../api/client'
 import type { Pokemon, FusionArtwork, FusionMap } from '../types'
 import { usePokemonList } from '../hooks/usePokemonList'
 import styles from './FusionDetail.module.css'
@@ -15,6 +15,8 @@ export default function FusionDetail() {
   const [fusionMap, setFusionMap] = useState<FusionMap>({})
   const [fusionLoading, setFusionLoading] = useState(true)
   const [activeIdx, setActiveIdx] = useState(0)
+  const [requested, setRequested] = useState(false)
+  const [requesting, setRequesting] = useState(false)
 
   useEffect(() => {
     getFusionMap()
@@ -63,14 +65,79 @@ export default function FusionDetail() {
 
   const active = artworks[activeIdx] ?? artworks[0]
 
-  if (!artworks.length || !poke1Data || !poke2Data) return (
-    <div className={styles.page}>
-      <div className={styles.notFound}>
-        <button onClick={() => navigate(`/pokemon/${poke1}`)} className={styles.backBtn}>← Back</button>
-        <p className={styles.notFoundText}>No fusion found for {capitalize(poke1 ?? '')} × {capitalize(poke2 ?? '')}</p>
+  const handleRequest = async () => {
+    if (requested || requesting || !poke1 || !poke2) return
+    setRequesting(true)
+    try {
+      await requestFusion(poke1, poke2)
+      setRequested(true)
+      localStorage.setItem(`fusion_req_${[poke1,poke2].sort().join('+')}`, '1')
+    } catch { }
+    finally { setRequesting(false) }
+  }
+
+  if (!artworks.length || !poke1Data || !poke2Data) {
+    const alreadyRequested = requested ||
+      !!localStorage.getItem(`fusion_req_${[poke1,poke2].sort().join('+')}`)
+    return (
+      <div className={styles.page}>
+        <div className={styles.noFusionWrap}>
+          <button onClick={() => navigate(`/pokemon/${poke1}`)} className={styles.backBtn}>
+            ← Back to {capitalize(poke1 ?? '')}
+          </button>
+
+          {/* Poke chips */}
+          {poke1Data && poke2Data && (
+            <div className={styles.fusionFormula}>
+              <PokeChip poke={poke1Data} />
+              <span className={styles.fusionX}>×</span>
+              <PokeChip poke={poke2Data} />
+            </div>
+          )}
+
+          {/* Placeholder image — replace src with your GDrive link */}
+          <div className={styles.noFusionImgWrap}>
+            <img
+              src="/assets/fusion_missing_placeholder.png"
+              alt="No fusion yet"
+              className={styles.noFusionImg}
+            />
+          </div>
+
+          <p className={styles.noFusionText}>
+            No fusion artwork yet for {capitalize(poke1 ?? '')} × {capitalize(poke2 ?? '')}
+          </p>
+
+          {/* Request button */}
+          <button
+            onClick={handleRequest}
+            disabled={alreadyRequested || requesting}
+            className={`${styles.requestBtn} ${alreadyRequested ? styles['requestBtn--filled'] : ''}`}
+          >
+            {alreadyRequested ? (
+            <>
+                <img
+                src="/assets/Pocket_Request_Selected.png"
+                alt=""
+                className={styles.requestBtnIcon}
+                />
+                Fusion Requested!
+            </>
+            ) : (
+            <>
+                <img
+                src="/assets/Pocket_Request_Unselected.png"
+                alt=""
+                className={styles.requestBtnIcon}
+                />
+                {requesting ? "Requesting…" : "Request this Fusion"}
+            </>
+            )}
+          </button>
+        </div>
       </div>
-    </div>
-  )
+    )
+  }
 
   return (
     <div className={styles.page}>

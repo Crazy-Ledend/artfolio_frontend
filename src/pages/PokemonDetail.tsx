@@ -5,23 +5,6 @@ import type { FusionMap } from '../types'
 import { usePokemonList } from '../hooks/usePokemonList'
 import styles from './PokemonDetail.module.css'
 
-const SPRITE_BASE = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon'
-const REGIONAL = ['-alola', '-galar', '-hisui', '-paldea']
-const SKIP = ['-mega', '-gmax', '-totem', '-primal', '-origin', '-sky', '-land',
-  '-incarnate', '-therian', '-black', '-white', '-resolute', '-ordinary', '-aria',
-  '-pirouette', '-baile', '-pom-pom', '-pau', '-sensu', '-dusk', '-midnight',
-  '-original', '-ash', '-battle-bond', '-power-construct', '-complete', '-school',
-  '-disguised', '-busted', '-hangry', '-gorging', '-single-strike', '-rapid-strike',
-  '-ice', '-shadow', '-crowned', '-eternamax', '-roaming', '-f', '-m',
-  '-red-striped', '-blue-striped', '-white-striped', '-male', '-female',
-  '-amped', '-low-key', '-curly', '-droopy', '-stretchy',
-  '-full-belly', '-hero', '-teal', '-aqua', '-blaze', '-stellar']
-
-function homeSprite(id: number) {
-  return id <= 1025
-    ? `${SPRITE_BASE}/other/home/${id}.png`
-    : `${SPRITE_BASE}/other/official-artwork/${id}.png`
-}
 function capitalize(s: string) { return s.charAt(0).toUpperCase() + s.slice(1) }
 
 export default function PokemonDetail() {
@@ -32,7 +15,6 @@ export default function PokemonDetail() {
   const [fusionMap, setFusionMap] = useState<FusionMap>({})
   const [fusionLoading, setFusionLoading] = useState(true)
   const [search, setSearch] = useState('')
-  const loading = pokeLoading || fusionLoading
 
   useEffect(() => {
     getFusionMap()
@@ -41,8 +23,11 @@ export default function PokemonDetail() {
       .finally(() => setFusionLoading(false))
   }, [])
 
+  const loading = pokeLoading || fusionLoading
+
   const poke = allPokemon.find(p => p.name === name)
   const artworks = fusionMap[name ?? ''] ?? []
+  const hasFusions = artworks.length > 0
   const partnerNames = new Set<string>()
   artworks.forEach(a => a.fusions.forEach(f => { if (f !== name) partnerNames.add(f) }))
 
@@ -59,28 +44,29 @@ export default function PokemonDetail() {
     </div>
   )
 
-  if (!poke || !artworks.length) return (
+  // If poke not found at all (bad URL)
+  if (!poke) return (
     <div className={styles.page}>
       <div className={styles.notFound}>
         <button onClick={() => navigate('/')} className={styles.backBtn}>← Back to Dex</button>
-        <p className={styles.notFoundText}>No fusion art for {capitalize(name ?? '')}</p>
+        <p className={styles.notFoundText}>Pokémon not found</p>
       </div>
     </div>
   )
 
   return (
     <div className={styles.page}>
-      {/* ── Hero section ── */}
+      {/* ── Hero ── */}
       <div className={styles.hero}>
         <button onClick={() => navigate('/')} className={styles.backBtn}>← Back to Dex</button>
 
-        <div className={styles.heroCard}>
+        <div className={`${styles.heroCard} ${!hasFusions ? styles['heroCard--inactive'] : ''}`}>
           <span className={styles.heroId}>#{String(poke.id).padStart(3, '0')}</span>
-          <div className={styles.heroDot} />
+          {hasFusions && <div className={styles.heroDot} />}
           <img
             src={poke.sprite}
             alt={poke.name}
-            className={styles.heroSprite}
+            className={`${styles.heroSprite} ${!hasFusions ? styles['heroSprite--inactive'] : ''}`}
             onError={e => {
               const img = e.target as HTMLImageElement
               if (poke.fallback && img.src !== poke.fallback) img.src = poke.fallback
@@ -88,10 +74,16 @@ export default function PokemonDetail() {
           />
           <div className={styles.heroDivider} />
           <p className={styles.heroName}>{capitalize(poke.name)}</p>
-          <p className={styles.heroSub}>{partnerNames.size} fusion{partnerNames.size !== 1 ? 's' : ''}</p>
+          <p className={styles.heroSub}>
+            {hasFusions ? `${partnerNames.size} fusion${partnerNames.size !== 1 ? 's' : ''}` : 'No fusions yet'}
+          </p>
         </div>
 
-        <p className={styles.prompt}>Select a Pokémon below to see the fusion artwork</p>
+        <p className={styles.prompt}>
+          {hasFusions
+            ? 'Select a Pokémon to see the fusion artwork'
+            : 'Select any Pokémon to request a fusion'}
+        </p>
       </div>
 
       {/* ── Search ── */}
@@ -101,11 +93,8 @@ export default function PokemonDetail() {
             <circle cx="5.5" cy="5.5" r="4"/><path d="M9 9l3 3"/>
           </svg>
           <input
-            type="text"
-            placeholder="Search Pokémon…"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className={styles.searchInput}
+            type="text" placeholder="Search Pokémon…" value={search}
+            onChange={e => setSearch(e.target.value)} className={styles.searchInput}
           />
           {search && (
             <button onClick={() => setSearch('')} className={styles.searchClear}>
@@ -117,7 +106,7 @@ export default function PokemonDetail() {
         </div>
       </div>
 
-      {/* ── Pokémon grid — same style as home ── */}
+      {/* ── Grid ── */}
       <div className={styles.gridWrap}>
         <div className={styles.grid}>
           {filtered.map(p => {
@@ -125,13 +114,12 @@ export default function PokemonDetail() {
             return (
               <button
                 key={p.id}
-                disabled={!isPartner}
-                onClick={() => isPartner && navigate(`/fusion/${name}/${p.name}`)}
+                onClick={() => navigate(`/fusion/${name}/${p.name}`)}
                 className={[
                   styles.tile,
                   isPartner ? styles['tile--active'] : styles['tile--inactive'],
                 ].join(' ')}
-                title={isPartner ? `Fused with ${capitalize(p.name)}` : p.name}
+                title={capitalize(p.name)}
               >
                 <img
                   src={p.sprite}
