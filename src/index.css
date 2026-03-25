@@ -29,25 +29,25 @@
 
 /* ── Dark theme ── */
 [data-theme="dark"] {
-  --bg-start:   #1a0f2e;
-  --bg-mid:     #2a1a4a;
-  --bg-end:     #3d1f5c;
-  --glass-bg:   rgba(255,255,255,0.06);
-  --glass-border: rgba(255,255,255,0.15);
-  --glass-input: rgba(255,255,255,0.1);
-  --ink-900:    #f5eeff;
-  --ink-800:    #e0d0f8;
-  --ink-700:    #c8b0e8;
-  --ink-600:    #a888cc;
-  --ink-500:    #8860aa;
-  --ink-400:    #6a4888;
-  --ink-300:    #4a2866;
-  --ink-200:    #2e1648;
-  --ink-100:    #1e0e30;
-  --accent:     #c084fc;
-  --canvas:     #1a0f2e;
+  --bg-start:   #030409;
+  --bg-mid:     #0a0c15;
+  --bg-end:     #141623;
+  --glass-bg:   rgba(24, 28, 42, 0.68);
+  --glass-border: rgba(117, 120, 141, 0.45);
+  --glass-input: rgba(34, 38, 57, 0.72);
+  --ink-900:    #f1f4ff;
+  --ink-800:    #d7dcee;
+  --ink-700:    #b8bdd4;
+  --ink-600:    #9ea5bc;
+  --ink-500:    #8a8fa2;
+  --ink-400:    #6e758f;
+  --ink-300:    #54607f;
+  --ink-200:    #2f3753;
+  --ink-100:    #101826;
+  --accent:     #8b8f9a;
+  --canvas:     #02040d;
   --tile-dim:   0.15;
-  --shadow:     rgba(100,0,180,0.25);
+  --shadow:     rgba(20, 30, 70, 0.35);
 }
 
 @layer base {

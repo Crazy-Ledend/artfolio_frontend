@@ -1,11 +1,11 @@
 .page {
   min-height: 100vh;
   background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-mid) 40%, var(--bg-end) 100%);
-  padding: 80px 16px 32px;
+  padding: 54px 16px 32px;
   transition: background 0.3s;
 }
 .inner { max-width: 1024px; margin: 0 auto; }
-.heading { font-family: 'Fredoka', sans-serif; font-size: 42px; font-weight: 600; color: var(--ink-800); margin: 16px 0 4px; }
+.heading { font-family: 'Fredoka', sans-serif; font-size: 42px; font-weight: 600; color: var(--ink-800); margin: 0 0 4px; }
 .subheading { font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 500; color: var(--ink-400); margin-bottom: 28px; }
 .grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
 @media (min-width: 640px)  { .grid { grid-template-columns: repeat(2, 1fr); } }

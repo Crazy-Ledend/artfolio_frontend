@@ -15,6 +15,7 @@ export default function PokemonDetail() {
   const [fusionMap, setFusionMap] = useState<FusionMap>({})
   const [fusionLoading, setFusionLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [filterMode, setFilterMode] = useState<'all' | 'available'>('all')
 
   useEffect(() => {
     getFusionMap()
@@ -29,11 +30,18 @@ export default function PokemonDetail() {
   const artworks = fusionMap[name ?? ''] ?? []
   const hasFusions = artworks.length > 0
   const partnerNames = new Set<string>()
-  artworks.forEach(a => a.fusions.forEach(f => { if (f !== name) partnerNames.add(f) }))
+  artworks.forEach(a => {
+    const isSelfFusion = a.fusions.every(f => f === name)
+    if (isSelfFusion) {
+      partnerNames.add(name ?? '')
+    } else {
+      a.fusions.forEach(f => { if (f !== name) partnerNames.add(f) })
+    }
+  })
 
-  const filtered = search
-    ? allPokemon.filter(p => p.name.includes(search.toLowerCase()))
-    : allPokemon
+  const filtered = allPokemon
+    .filter(p => filterMode === 'available' ? partnerNames.has(p.name) : true)
+    .filter(p => search ? p.name.includes(search.toLowerCase()) : true)
 
   if (loading) return (
     <div className={styles.page}>
@@ -104,6 +112,14 @@ export default function PokemonDetail() {
             </button>
           )}
         </div>
+        <select 
+          value={filterMode} 
+          onChange={e => setFilterMode(e.target.value as 'all' | 'available')}
+          className={styles.filterSelect}
+        >
+          <option value="all">All Pokémon</option>
+          <option value="available">Available fusions</option>
+        </select>
       </div>
 
       {/* ── Grid ── */}

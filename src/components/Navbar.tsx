@@ -82,12 +82,15 @@ export default function Navbar({ onContactOpen }: NavbarProps) {
               onClick={() => setMenuOpen(o => !o)}
               className={`${styles.hamburger} ${menuOpen ? styles['hamburger--open'] : ''}`}
               aria-label="Menu"
+              aria-expanded={menuOpen}
             >
               <span /><span /><span />
             </button>
 
             {menuOpen && (
-              <div className={styles.dropdown}>
+              <>
+                <div className={styles.menuBackdrop} onClick={() => setMenuOpen(false)} />
+                <div className={styles.dropdown}>
                 <Link to="/" className={`${styles.dropItem} ${pathname === '/' ? styles['dropItem--active'] : ''}`}>
                   Gallery
                 </Link>
@@ -102,6 +105,7 @@ export default function Navbar({ onContactOpen }: NavbarProps) {
                   Admin
                 </Link>
               </div>
+              </>
             )}
           </div>
         </div>

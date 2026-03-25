@@ -142,3 +142,13 @@ export interface ProfileFormData {
   location: string
   socials: SocialLink[]
 }
+
+// ── Fusion Requests ───────────────────────────────────────
+
+export interface FusionRequest {
+  id: string
+  poke1: string
+  poke2: string
+  votes: number
+  created_at: string
+}

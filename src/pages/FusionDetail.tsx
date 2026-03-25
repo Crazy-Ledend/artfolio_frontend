@@ -7,6 +7,12 @@ import styles from './FusionDetail.module.css'
 
 function capitalize(s: string) { return s.charAt(0).toUpperCase() + s.slice(1) }
 
+function defaultFusionName(poke1: string, poke2: string) {
+  const first = poke1.slice(0, Math.floor(poke1.length / 2))
+  const second = poke2.slice(Math.floor(poke2.length / 2))
+  return `${first}${second}`
+}
+
 export default function FusionDetail() {
   const { poke1, poke2 } = useParams<{ poke1: string; poke2: string }>()
   const navigate = useNavigate()
@@ -47,10 +53,16 @@ export default function FusionDetail() {
   }
 
   // All artworks containing BOTH pokemon (deduped)
-  const allBoth = dedup([
-    ...(fusionMap[poke1 ?? ''] ?? []).filter(a => a.fusions.includes(poke2 ?? '')),
-    ...(fusionMap[poke2 ?? ''] ?? []).filter(a => a.fusions.includes(poke1 ?? '')),
-  ])
+  const allBoth = dedup(
+    poke1 === poke2
+      ? // Self-fusion: all fusions must be the same pokemon
+        (fusionMap[poke1 ?? ''] ?? []).filter(a => a.fusions.every(f => f === poke1))
+      : // Regular fusion: must contain both pokemon
+        [
+          ...(fusionMap[poke1 ?? ''] ?? []).filter(a => a.fusions.includes(poke2 ?? '')),
+          ...(fusionMap[poke2 ?? ''] ?? []).filter(a => a.fusions.includes(poke1 ?? '')),
+        ]
+  )
 
   // Primary: artworks where poke1 is listed first
   const artworks = allBoth.filter(a => a.fusions[0] === poke1)
@@ -82,9 +94,18 @@ export default function FusionDetail() {
     return (
       <div className={styles.page}>
         <div className={styles.noFusionWrap}>
-          <button onClick={() => navigate(`/pokemon/${poke1}`)} className={styles.backBtn}>
-            ← Back to {capitalize(poke1 ?? '')}
-          </button>
+          <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-start', alignItems: 'center', marginBottom: 16, width: '100%', paddingLeft: 14 }}>
+            <button onClick={() => navigate(`/pokemon/${poke1}`)} className={styles.backBtn}>
+              ← Back to {capitalize(poke1 ?? '')}
+            </button>
+            <button 
+              onClick={() => navigate(`/fusion/${poke2}/${poke1}`)} 
+              className={styles.backBtn}
+              title="View reversed fusion"
+            >
+              Reverse ⇆
+            </button>
+          </div>
 
           {/* Poke chips */}
           {poke1Data && poke2Data && (
@@ -107,6 +128,11 @@ export default function FusionDetail() {
           <p className={styles.noFusionText}>
             No fusion artwork yet for {capitalize(poke1 ?? '')} × {capitalize(poke2 ?? '')}
           </p>
+          {poke1 && poke2 && (
+            <p className={styles.defaultFusionName}>
+              Default name: {capitalize(defaultFusionName(poke1, poke2))}
+            </p>
+          )}
 
           {/* Request button */}
           <button
@@ -142,9 +168,18 @@ export default function FusionDetail() {
   return (
     <div className={styles.page}>
       <div className={styles.hero}>
-        <button onClick={() => navigate(`/pokemon/${poke1}`)} className={styles.backBtn}>
-          ← Back to {capitalize(poke1 ?? '')}
-        </button>
+        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-start', alignItems: 'center', marginBottom: 16, width: '100%', paddingLeft: 14 }}>
+          <button onClick={() => navigate(`/pokemon/${poke1}`)} className={styles.backBtn}>
+            ← Back to {capitalize(poke1 ?? '')}
+          </button>
+          <button 
+            onClick={() => navigate(`/fusion/${poke2}/${poke1}`)} 
+            className={styles.backBtn}
+            title="View reversed fusion"
+          >
+            Reverse ⇆
+          </button>
+        </div>
 
         {/* Fusion formula */}
         <div className={styles.fusionFormula}>

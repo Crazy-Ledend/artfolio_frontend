@@ -21,7 +21,7 @@ export default function App() {
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Navbar onContactOpen={() => setContactOpen(true)} />
-      <div className="pt-16">
+      <div className="pt-0">
         <Routes>
           <Route path="/" element={<Gallery />} />
           <Route path="/collections" element={<Collections />} />
