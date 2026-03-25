@@ -146,6 +146,10 @@
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
+[data-theme="dark"] .thumbLabel {
+  color: #f1f4ff;
+}
+
 /* ── Related artworks ── */
 .related {
   max-width: 720px; margin: 0 auto;
