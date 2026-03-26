@@ -4,7 +4,7 @@
   padding-top: 54px;
   transition: background 0.3s;
   display: flex; flex-direction: column;
-  overflow-x: hidden;
+  overflow-x: clip; /*hidden*/
   width: 100%;
   box-sizing: border-box;
 }
@@ -74,7 +74,7 @@
 .prompt { font-family: 'Nunito',sans-serif; font-size: 13px; font-weight: 600; color: var(--ink-400); text-align: center; }
 
 /* ── Search ── */
-.searchWrap { padding: 10px 16px 6px; max-width: 960px; width: 100%; margin: 0 auto; display: flex; align-items: center; gap: 12px; position: relative; z-index: 20; }
+.searchWrap { padding: 10px 16px 6px; max-width: 960px; width: 100%; margin: 0 auto; display: flex; align-items: center; gap: 12px; position: relative; z-index: 20; overflow: visible; }
 .searchBar {
   flex: 1; background: var(--glass-input); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   border: 2px solid var(--glass-border); border-radius: 12px;
@@ -87,7 +87,7 @@
 
 .filterWrapper {
   position: relative;
-  z-index: 30;
+  z-index: 999;
 }
 
 .filterSelect {
@@ -97,6 +97,8 @@
   cursor: pointer; outline: none; transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.15s;
   backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+  position: relative;
+  z-index: 1000;
 }
 .filterSelect:focus {
   border-color: var(--accent); color: var(--ink-900);

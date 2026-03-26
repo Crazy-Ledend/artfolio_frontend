@@ -21,7 +21,7 @@
   transition: background 0.3s, border-color 0.3s;
   /* Additions */
   overflow-x: hidden;
-  padding: 8px 4px 32px;
+  padding: 8px 8px 32px;
 }
 
 /* ── Dex top panel ── */
@@ -79,14 +79,15 @@
 .dexBody { flex: 1; overflow: hidden; }
 
 .gridScreen {
-  height: 100%; overflow-y: auto; overflow-x: hidden; padding: 8px;
+  height: 100%; overflow-y: auto; overflow-x: hidden; padding: 4px;
   background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.012) 3px, rgba(0,0,0,0.012) 4px);
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 4px;
+  gap: 6px;
+  padding: 8px 6px;
 }
 
 @media (min-width: 768px) {
@@ -188,24 +189,13 @@
 
 @media (min-width: 480px) {
   .tileImg { width: 72px; height: 72px; }
-  .tile--active:hover {
-    transform: scale(0.96);
-    transition: transform 0.1s;
-    background: var(--glass-bg);
-    border: 2px solid var(--glass-border);
-    border-radius: 12px;
-    padding: 6px 4px 4px;
-    box-shadow: 0 6px 20px var(--shadow);
-    z-index: 10;
-  }
-
+  .tile--active:hover,
   .tile--inactive:hover {
-    transform: scale(0.96);
-    transition: transform 0.1s;
-    background: var(--glass-bg);
+    transform: scale(1.06);   /* subtle, not aggressive */
+    padding: 0;               /* IMPORTANT */
     border-radius: 12px;
-    padding: 6px 4px 4px;
-    outline: 2px solid rgba(255, 255, 255, 0.45);
+    background: var(--glass-bg);
+    outline: 2px solid rgba(255,255,255,0.45);
     box-shadow: 0 6px 20px var(--shadow);
     z-index: 10;
   }
@@ -213,6 +203,16 @@
 
 @media (min-width: 768px) {
   .tileImg { width: 90px; height: 90px; }
+  .tile--active:hover,
+  .tile--inactive:hover {
+    transform: scale(1.06);   /* subtle, not aggressive */
+    padding: 0;               /* IMPORTANT */
+    border-radius: 12px;
+    background: var(--glass-bg);
+    outline: 2px solid rgba(255,255,255,0.45);
+    box-shadow: 0 6px 20px var(--shadow);
+    z-index: 10;
+  }
 }
 .tileImg--loaded { opacity: 1; }
 
