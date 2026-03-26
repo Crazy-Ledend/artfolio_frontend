@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getCollection, getArtworks } from '../api/client'
 import type { Artwork, Collection } from '../types'
-import styles from './CollectionDetail.module.css'
+import styles from './styles/CollectionDetail.module.css'
 
 function capitalize(s: string) { return s.charAt(0).toUpperCase() + s.slice(1) }
 
@@ -33,7 +33,7 @@ export default function CollectionDetail() {
   if (loading) return (
     <div className={styles.page}>
       <div className={styles.loadingWrap}>
-        <div className={styles.spinner} />
+        <img src="https://m.archives.bulbagarden.net/media/upload/a/a2/Spr_2c_025.png" alt="Loading…" className={styles.spinner} />
         <p className={styles.loadingText}>Loading…</p>
       </div>
     </div>

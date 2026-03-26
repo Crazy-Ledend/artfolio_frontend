@@ -7,7 +7,7 @@ import type { Artwork, Collection, ContactRecord, ArtworkFormData, CollectionFor
 import PokemonPicker from '../components/PokemonPicker'
 import { getProfile, updateProfile, getFusionRequests, deleteFusionRequest } from '../api/client'
 import type { ArtistProfile, SocialLink, FusionRequest } from '../types'
-import styles from './Admin.module.css'
+import styles from './styles/Admin.module.css'
 
 const SECRET_KEY = 'artfolio_admin_secret'
 type Tab = 'artworks' | 'collections' | 'messages' | 'profile' | 'requests'
@@ -65,11 +65,11 @@ export default function Admin() {
           ))}
         </div>
 
-        {tab === 'artworks'    && <ArtworksTab secret={secret} />}
+        {tab === 'artworks' && <ArtworksTab secret={secret} />}
         {tab === 'collections' && <CollectionsTab secret={secret} />}
-        {tab === 'messages'    && <MessagesTab secret={secret} />}
-        {tab === 'profile'     && <ProfileTab secret={secret} />}
-        {tab === 'requests'    && <RequestsTab secret={secret} />}
+        {tab === 'messages' && <MessagesTab secret={secret} />}
+        {tab === 'profile' && <ProfileTab secret={secret} />}
+        {tab === 'requests' && <RequestsTab secret={secret} />}
       </div>
     </div>
   )
@@ -119,14 +119,14 @@ function LoginScreen({ onLogin }: { onLogin: (s: string) => Promise<boolean> }) 
           >
             {show ? (
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/>
-                <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/>
-                <line x1="1" y1="1" x2="23" y2="23"/>
+                <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94" />
+                <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19" />
+                <line x1="1" y1="1" x2="23" y2="23" />
               </svg>
             ) : (
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                <circle cx="12" cy="12" r="3"/>
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
               </svg>
             )}
           </button>
@@ -154,15 +154,15 @@ function emptyArtwork(): ArtworkFormData {
 }
 
 function ArtworksTab({ secret }: { secret: string }) {
-  const [artworks, setArtworks]     = useState<Artwork[]>([])
+  const [artworks, setArtworks] = useState<Artwork[]>([])
   const [collections, setCollections] = useState<Collection[]>([])
-  const [loading, setLoading]       = useState(true)
-  const [error, setError]           = useState<string | null>(null)
-  const [showForm, setShowForm]     = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [showForm, setShowForm] = useState(false)
   const [editTarget, setEditTarget] = useState<string | null>(null)
-  const [form, setForm]             = useState<ArtworkFormData>(emptyArtwork())
-  const [saving, setSaving]         = useState(false)
-  const [saveError, setSaveError]   = useState('')
+  const [form, setForm] = useState<ArtworkFormData>(emptyArtwork())
+  const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState('')
 
   const load = () => {
     setLoading(true); setError(null)
@@ -319,7 +319,7 @@ function CollectionsTab({ secret }: { secret: string }) {
   const [form, setForm] = useState<CollectionFormData>({ name: '', slug: '', description: '', cover_gdrive_file_id: '', sort_order: 0 })
   const [saving, setSaving] = useState(false)
 
-  const load = () => getCollections().then(c => setCollections(Array.isArray(c) ? c : [])).catch(() => {})
+  const load = () => getCollections().then(c => setCollections(Array.isArray(c) ? c : [])).catch(() => { })
   useEffect(() => { load() }, [])
 
   const handleCreate = async () => {
@@ -346,19 +346,19 @@ function CollectionsTab({ secret }: { secret: string }) {
           <div><label className={styles.fieldLabel}>Slug</label><input value={form.slug} onChange={e => setF('slug', e.target.value)} className={styles.input} /></div>
           <div><label className={styles.fieldLabel}>Description</label><textarea value={form.description} onChange={e => setF('description', e.target.value)} rows={2} className={styles.textarea} /></div>
           <div>
-              <label className={styles.fieldLabel}>Cover image (GDrive URL or file ID)</label>
-              <input
-                value={form.cover_gdrive_file_id}
-                onChange={e => {
-                  const val = e.target.value
-                  // Extract file ID from GDrive URL if pasted
-                  const match = val.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]{20,})/)
-                  setF('cover_gdrive_file_id', match ? match[1] : val)
-                }}
-                className={styles.input}
-                placeholder="Paste Google Drive link or file ID"
-              />
-            </div>
+            <label className={styles.fieldLabel}>Cover image (GDrive URL or file ID)</label>
+            <input
+              value={form.cover_gdrive_file_id}
+              onChange={e => {
+                const val = e.target.value
+                // Extract file ID from GDrive URL if pasted
+                const match = val.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]{20,})/)
+                setF('cover_gdrive_file_id', match ? match[1] : val)
+              }}
+              className={styles.input}
+              placeholder="Paste Google Drive link or file ID"
+            />
+          </div>
           <button onClick={handleCreate} disabled={saving || !form.name || !form.slug} className={styles.btnPrimary} style={{ width: 'fit-content' }}>
             {saving ? 'Creating…' : 'Create'}
           </button>
@@ -384,7 +384,7 @@ function MessagesTab({ secret }: { secret: string }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    getContacts(secret).then(c => setContacts(Array.isArray(c) ? c : [])).catch(() => {}).finally(() => setLoading(false))
+    getContacts(secret).then(c => setContacts(Array.isArray(c) ? c : [])).catch(() => { }).finally(() => setLoading(false))
   }, [secret])
 
   if (loading) return (
@@ -415,7 +415,7 @@ function MessagesTab({ secret }: { secret: string }) {
 
 // ── Profile Tab ───────────────────────────────────────────
 
-const PLATFORMS = ['instagram','twitter','bluesky','artstation','deviantart','youtube','tiktok','website']
+const PLATFORMS = ['instagram', 'twitter', 'bluesky', 'artstation', 'deviantart', 'youtube', 'tiktok', 'website']
 
 function ProfileTab({ secret }: { secret: string }) {
   const [profile, setProfile] = useState<ArtistProfile | null>(null)
@@ -432,7 +432,7 @@ function ProfileTab({ secret }: { secret: string }) {
         setForm({ name: p.name ?? '', bio: p.bio ?? '', photo_gdrive_url: '', location: p.location ?? '' })
         setSocials(p.socials ?? [])
       })
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setLoading(false))
   }, [])
 
@@ -468,12 +468,12 @@ function ProfileTab({ secret }: { secret: string }) {
         )}
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <div><label className={styles.fieldLabel}>Display name</label><input value={form.name} onChange={e => setForm(f => ({...f, name: e.target.value}))} className={styles.input} placeholder="Your name" /></div>
-          <div><label className={styles.fieldLabel}>Location</label><input value={form.location} onChange={e => setForm(f => ({...f, location: e.target.value}))} className={styles.input} placeholder="City, Country" /></div>
-          <div><label className={styles.fieldLabel}>Profile photo (GDrive URL)</label><input value={form.photo_gdrive_url} onChange={e => setForm(f => ({...f, photo_gdrive_url: e.target.value}))} className={styles.input} placeholder="Paste Google Drive shareable link" /></div>
+          <div><label className={styles.fieldLabel}>Display name</label><input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} className={styles.input} placeholder="Your name" /></div>
+          <div><label className={styles.fieldLabel}>Location</label><input value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} className={styles.input} placeholder="City, Country" /></div>
+          <div><label className={styles.fieldLabel}>Profile photo (GDrive URL)</label><input value={form.photo_gdrive_url} onChange={e => setForm(f => ({ ...f, photo_gdrive_url: e.target.value }))} className={styles.input} placeholder="Paste Google Drive shareable link" /></div>
           <div>
             <label className={styles.fieldLabel}>Bio</label>
-            <textarea value={form.bio} onChange={e => setForm(f => ({...f, bio: e.target.value}))} rows={4} className={styles.textarea} placeholder="Tell visitors about yourself and your art…" />
+            <textarea value={form.bio} onChange={e => setForm(f => ({ ...f, bio: e.target.value }))} rows={4} className={styles.textarea} placeholder="Tell visitors about yourself and your art…" />
           </div>
 
           {/* Social links */}
@@ -528,13 +528,13 @@ function RequestsTab({ secret }: { secret: string }) {
         })
         setPokeIds(map)
       })
-      .catch(() => {})
+      .catch(() => { })
   }, [])
 
   const load = () => {
     getFusionRequests(secret)
       .then(r => setRequests(Array.isArray(r) ? r : []))
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setLoading(false))
   }
   useEffect(() => { load() }, [secret])
@@ -578,8 +578,8 @@ function RequestsTab({ secret }: { secret: string }) {
               </div>
               {/* Names */}
               <p style={{ fontFamily: 'Fredoka,sans-serif', fontSize: 15, fontWeight: 600, color: 'var(--ink-800)', textAlign: 'center', lineHeight: 1.2 }}>
-                {req.poke1.charAt(0).toUpperCase() + req.poke1.slice(1)}<br/>
-                <span style={{ color: 'var(--ink-400)', fontSize: 13 }}>+</span><br/>
+                {req.poke1.charAt(0).toUpperCase() + req.poke1.slice(1)}<br />
+                <span style={{ color: 'var(--ink-400)', fontSize: 13 }}>+</span><br />
                 {req.poke2.charAt(0).toUpperCase() + req.poke2.slice(1)}
               </p>
               {/* Votes */}

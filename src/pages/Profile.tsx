@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { getProfile } from '../api/client'
 import type { ArtistProfile, SocialLink } from '../types'
-import styles from './Profile.module.css'
+import styles from './styles/Profile.module.css'
 
 export default function Profile() {
   const [profile, setProfile] = useState<ArtistProfile | null>(null)
@@ -10,14 +10,14 @@ export default function Profile() {
   useEffect(() => {
     getProfile()
       .then(setProfile)
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setLoading(false))
   }, [])
 
   if (loading) return (
     <div className={styles.page}>
       <div className={styles.loadingWrap}>
-        <div className={styles.spinner} />
+        <img src="https://m.archives.bulbagarden.net/media/upload/a/a2/Spr_2c_025.png" alt="Loading…" className={styles.spinner} />
       </div>
     </div>
   )
@@ -38,8 +38,8 @@ export default function Profile() {
             ) : (
               <div className={styles.avatarPlaceholder}>
                 <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <circle cx="24" cy="18" r="10"/>
-                  <path d="M6 42c0-9.941 8.059-18 18-18s18 8.059 18 18"/>
+                  <circle cx="24" cy="18" r="10" />
+                  <path d="M6 42c0-9.941 8.059-18 18-18s18 8.059 18 18" />
                 </svg>
               </div>
             )}
@@ -51,8 +51,8 @@ export default function Profile() {
           {profile.location && (
             <p className={styles.location}>
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                <path d="M6 1C4.07 1 2.5 2.57 2.5 4.5c0 2.625 3.5 6.5 3.5 6.5s3.5-3.875 3.5-6.5C9.5 2.57 7.93 1 6 1z"/>
-                <circle cx="6" cy="4.5" r="1"/>
+                <path d="M6 1C4.07 1 2.5 2.57 2.5 4.5c0 2.625 3.5 6.5 3.5 6.5s3.5-3.875 3.5-6.5C9.5 2.57 7.93 1 6 1z" />
+                <circle cx="6" cy="4.5" r="1" />
               </svg>
               {profile.location}
             </p>

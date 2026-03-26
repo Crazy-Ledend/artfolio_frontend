@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import styles from './PokemonPicker.module.css'
+import styles from './styles/PokemonPicker.module.css'
 
 interface PokemonPickerProps {
   value: string[]

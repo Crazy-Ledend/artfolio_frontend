@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { Pokemon, FusionArtwork, FusionMap } from '../types'
-import styles from './FusionPopup.module.css'
+import styles from './styles/FusionPopup.module.css'
 
 interface FusionPopupProps {
   poke: Pokemon
@@ -49,7 +49,7 @@ export default function FusionPopup({ poke, artworks, allFusions, allPokemon, on
       <div className={styles.popup}>
         <button onClick={onClose} className={styles.closeBtn}>
           <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <path d="M1 1l9 9M10 1L1 10"/>
+            <path d="M1 1l9 9M10 1L1 10" />
           </svg>
         </button>
 
@@ -158,7 +158,7 @@ export default function FusionPopup({ poke, artworks, allFusions, allPokemon, on
             /* Empty state — prompt to click a partner */
             <div className={styles.emptyRight}>
               <p className={styles.emptyRightText}>
-                Click a highlighted Pokémon<br/>to see the fusion artwork
+                Click a highlighted Pokémon<br />to see the fusion artwork
               </p>
               <div className={styles.emptyArrow}>←</div>
             </div>

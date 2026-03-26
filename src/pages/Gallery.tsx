@@ -3,7 +3,7 @@ import { usePokemonList } from '../hooks/usePokemonList'
 import { useNavigate } from 'react-router-dom'
 import { getFusionMap } from '../api/client'
 import type { Pokemon, FusionMap } from '../types'
-import styles from './Gallery.module.css'
+import styles from './styles/Gallery.module.css'
 
 export default function Gallery() {
   const navigate = useNavigate()
@@ -24,7 +24,7 @@ export default function Gallery() {
 
   const hasFusion = useCallback((name: string) =>
     name in fusionMap && fusionMap[name].length > 0
-  , [fusionMap])
+    , [fusionMap])
 
   const filtered = search
     ? pokemon.filter(p => p.name.includes(search.toLowerCase()))
@@ -45,7 +45,7 @@ export default function Gallery() {
 
           <div className={styles.searchBar}>
             <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ color: 'var(--ink-400)', flexShrink: 0 }}>
-              <circle cx="5.5" cy="5.5" r="4"/><path d="M9 9l3 3"/>
+              <circle cx="5.5" cy="5.5" r="4" /><path d="M9 9l3 3" />
             </svg>
             <input
               type="text" placeholder="Search Pokémon…"
@@ -55,7 +55,7 @@ export default function Gallery() {
             {search && (
               <button onClick={() => setSearch('')} className={styles.searchClear}>
                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <path d="M1 1l8 8M9 1L1 9"/>
+                  <path d="M1 1l8 8M9 1L1 9" />
                 </svg>
               </button>
             )}
@@ -73,7 +73,7 @@ export default function Gallery() {
           <div className={styles.gridScreen}>
             {loading ? (
               <div className={styles.loadingWrap}>
-                <div className={styles.loadingSpinner} />
+                <img src="https://m.archives.bulbagarden.net/media/upload/a/a2/Spr_2c_025.png" alt="Loading…" className={styles.loadingSpinner} />
                 <p className={styles.loadingText}>Loading Pokédex…</p>
               </div>
             ) : (

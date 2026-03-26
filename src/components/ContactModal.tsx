@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { submitContact } from '../api/client'
 import type { Artwork, ContactMessage } from '../types'
-import styles from './ContactModal.module.css'
+import styles from './styles/ContactModal.module.css'
 
 interface ContactModalProps {
   prefillArtwork?: Artwork
@@ -60,7 +60,7 @@ export default function ContactModal({ prefillArtwork, onClose }: ContactModalPr
             </div>
             <button onClick={onClose} className={styles.closeBtn}>
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                <path d="M1 1l10 10M11 1L1 11"/>
+                <path d="M1 1l10 10M11 1L1 11" />
               </svg>
             </button>
           </div>
@@ -69,7 +69,7 @@ export default function ContactModal({ prefillArtwork, onClose }: ContactModalPr
             <div className={styles.success}>
               <div className={styles.successIcon}>
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M4 10l5 5 7-8"/>
+                  <path d="M4 10l5 5 7-8" />
                 </svg>
               </div>
               <p className={styles.successTitle}>Message sent</p>

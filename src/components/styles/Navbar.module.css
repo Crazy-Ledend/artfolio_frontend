@@ -170,6 +170,18 @@
 }
 @keyframes dropIn { from{opacity:0;transform:scale(0.95) translateY(-6px)} to{opacity:1;transform:scale(1) translateY(0)} }
 
+/* Blurred full-screen backdrop behind the mobile menu */
+.menuBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 311; /* just below dropdown's 312 */
+  background: rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: fadeIn 0.2s ease both;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
 .dropItem {
   display: block; width: 100%; text-align: left;
   padding: 10px 14px; border-radius: 10px;

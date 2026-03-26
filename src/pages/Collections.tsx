@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getCollections } from '../api/client'
 import type { Collection } from '../types'
-import styles from './Collections.module.css'
+import styles from './styles/Collections.module.css'
 
 export default function Collections() {
   const [collections, setCollections] = useState<Collection[]>([])
@@ -11,7 +11,7 @@ export default function Collections() {
   useEffect(() => {
     getCollections()
       .then(c => setCollections(Array.isArray(c) ? c : []))
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setLoading(false))
   }, [])
 
@@ -50,9 +50,9 @@ function CollectionCard({ collection }: { collection: Collection }) {
         ) : (
           <div className={styles.cardCoverEmpty}>
             <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="0.8">
-              <rect x="4" y="4" width="32" height="32" rx="4"/>
-              <circle cx="14" cy="14" r="4"/>
-              <path d="M36 28L24 16 14 26 8 20"/>
+              <rect x="4" y="4" width="32" height="32" rx="4" />
+              <circle cx="14" cy="14" r="4" />
+              <path d="M36 28L24 16 14 26 8 20" />
             </svg>
           </div>
         )}
