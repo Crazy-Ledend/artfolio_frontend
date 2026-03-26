@@ -8,6 +8,14 @@ interface PokemonPickerProps {
 
 interface PokeOption { name: string; id: number }
 
+const SPRITE_BASE = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon'
+
+function spriteForId(id: number) {
+  return id <= 1025
+    ? `${SPRITE_BASE}/other/home/${id}.png`
+    : `${SPRITE_BASE}/other/official-artwork/${id}.png`
+}
+
 export default function PokemonPicker({ value, onChange }: PokemonPickerProps) {
   const [query, setQuery] = useState('')
   const [options, setOptions] = useState<PokeOption[]>([])
@@ -17,16 +25,22 @@ export default function PokemonPicker({ value, onChange }: PokemonPickerProps) {
 
   // Load all pokemon names once
   useEffect(() => {
-    fetch('https://pokeapi.co/api/v2/pokemon?limit=1025')
-      .then(r => r.json())
-      .then(d => {
-        const list: PokeOption[] = d.results.map((p: { name: string }, i: number) => ({
+    const loadPokemon = async () => {
+      try {
+        const countData = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1').then(r => r.json())
+        const count = countData.count ?? 1500
+        const listData = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${count}&offset=0`).then(r => r.json())
+        const list: PokeOption[] = listData.results.map((p: { name: string; url: string }) => ({
           name: p.name,
-          id: i + 1,
+          id: parseInt(p.url.replace(/\/+$/, '').split('/').pop() ?? '0'),
         }))
         setAllPokemon(list)
-      })
-      .catch(() => {})
+      } catch {
+        setAllPokemon([])
+      }
+    }
+
+    loadPokemon()
   }, [])
 
   useEffect(() => {
@@ -52,7 +66,7 @@ export default function PokemonPicker({ value, onChange }: PokemonPickerProps) {
           {value.map(name => (
             <span key={name} className={styles.chip}>
               <img
-                src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${allPokemon.find(p => p.name === name)?.id ?? 0}.png`}
+                src={spriteForId(allPokemon.find(p => p.name === name)?.id ?? 0)}
                 alt={name}
                 className={styles.chipSprite}
               />
@@ -80,7 +94,7 @@ export default function PokemonPicker({ value, onChange }: PokemonPickerProps) {
             {options.map(opt => (
               <button key={opt.name} onMouseDown={() => add(opt.name)} className={styles.option}>
                 <img
-                  src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${opt.id}.png`}
+                  src={spriteForId(opt.id)}
                   alt={opt.name}
                   className={styles.optionSprite}
                 />

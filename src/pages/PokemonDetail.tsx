@@ -112,7 +112,7 @@ export default function PokemonDetail() {
             </button>
           )}
         </div>
-        <div className="filterWrapper">
+        <div className={styles.filterWrapper}>
           <select 
             value={filterMode} 
             onChange={e => setFilterMode(e.target.value as 'all' | 'available')}

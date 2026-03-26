@@ -74,11 +74,13 @@
 .prompt { font-family: 'Nunito',sans-serif; font-size: 13px; font-weight: 600; color: var(--ink-400); text-align: center; }
 
 /* ── Search ── */
-.searchWrap { padding: 10px 16px 6px; max-width: 960px; width: 100%; margin: 0 auto; display: flex; align-items: center; gap: 12px; position: relative; z-index: 20; overflow: visible; }
+.searchWrap { padding: 10px 16px 6px; max-width: 960px; width: 100%; margin: 0 auto; display: flex; align-items: center; gap: 12px; position: relative; z-index: 20; overflow: visible; flex-wrap: wrap; box-sizing: border-box; }
 .searchBar {
   flex: 1; background: var(--glass-input); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   border: 2px solid var(--glass-border); border-radius: 12px;
   padding: 7px 12px; display: flex; align-items: center; gap: 8px;
+  min-width: 0;
+  box-sizing: border-box;
 }
 .searchInput { flex: 1; background: transparent; border: none; outline: none; font-family: 'Nunito',sans-serif; font-size: 13px; font-weight: 600; color: var(--ink-800); }
 .searchInput::placeholder { color: var(--ink-300); }
@@ -88,6 +90,9 @@
 .filterWrapper {
   position: relative;
   z-index: 999;
+  flex: 0 0 auto;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .filterSelect {
@@ -99,6 +104,8 @@
   box-shadow: 0 8px 16px rgba(0,0,0,0.12);
   position: relative;
   z-index: 1000;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 .filterSelect:focus {
   border-color: var(--accent); color: var(--ink-900);
@@ -107,6 +114,21 @@
 }
 .filterSelect:hover { background: var(--glass-bg); border-color: var(--glass-border); color: var(--ink-800); }
 .filterSelect option { background: var(--canvas); color: var(--ink-800); padding: 8px; }
+
+@media (max-width: 600px) {
+  .searchWrap {
+    align-items: stretch;
+  }
+
+  .filterWrapper {
+    width: 100%;
+  }
+
+  .filterSelect {
+    width: 100%;
+    min-width: 0;
+  }
+}
 
 /* ── Grid — same style as home ── */
 .gridWrap { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 8px 4px 32px; max-width: 960px; width: 100%; margin: 0 auto; box-sizing: border-box; overflow-y: visible; }
