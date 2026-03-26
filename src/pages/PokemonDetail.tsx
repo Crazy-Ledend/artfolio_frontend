@@ -112,14 +112,16 @@ export default function PokemonDetail() {
             </button>
           )}
         </div>
-        <select 
-          value={filterMode} 
-          onChange={e => setFilterMode(e.target.value as 'all' | 'available')}
-          className={styles.filterSelect}
-        >
-          <option value="all">All Pokémon</option>
-          <option value="available">Available fusions</option>
-        </select>
+        <div className="filterWrapper">
+          <select 
+            value={filterMode} 
+            onChange={e => setFilterMode(e.target.value as 'all' | 'available')}
+            className={styles.filterSelect}
+          >
+            <option value="all">All Pokémon</option>
+            <option value="available">Available fusions</option>
+          </select>
+        </div>
       </div>
 
       {/* ── Grid ── */}

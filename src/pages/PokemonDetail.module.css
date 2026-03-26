@@ -53,7 +53,7 @@
 }
 
 .heroId { position: absolute; top: 8px; left: 12px; font-family: 'Silkscreen',monospace; font-size: 9px; letter-spacing: 0.1em; color: var(--ink-300); }
-.heroDot { position: absolute; top: 10px; right: 12px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 6px var(--accent); animation: pulse 2s ease-in-out infinite; }
+/* .heroDot { position: absolute; top: 10px; right: 12px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 6px var(--accent); animation: pulse 2s ease-in-out infinite; } */
 @keyframes pulse { 0%,100%{opacity:0.6} 50%{opacity:1} }
 
 .heroSprite {
@@ -74,7 +74,7 @@
 .prompt { font-family: 'Nunito',sans-serif; font-size: 13px; font-weight: 600; color: var(--ink-400); text-align: center; }
 
 /* ── Search ── */
-.searchWrap { padding: 10px 16px 6px; max-width: 960px; width: 100%; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+.searchWrap { padding: 10px 16px 6px; max-width: 960px; width: 100%; margin: 0 auto; display: flex; align-items: center; gap: 12px; position: relative; z-index: 20; }
 .searchBar {
   flex: 1; background: var(--glass-input); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   border: 2px solid var(--glass-border); border-radius: 12px;
@@ -84,6 +84,11 @@
 .searchInput::placeholder { color: var(--ink-300); }
 .searchClear { background: none; border: none; cursor: pointer; color: var(--ink-400); display: flex; align-items: center; transition: color 0.15s; }
 .searchClear:hover { color: var(--ink-700); }
+
+.filterWrapper {
+  position: relative;
+  z-index: 30;
+}
 
 .filterSelect {
   min-width: 170px; padding: 10px 14px; border-radius: 14px; border: 2px solid var(--glass-border);
@@ -102,7 +107,7 @@
 .filterSelect option { background: var(--canvas); color: var(--ink-800); padding: 8px; }
 
 /* ── Grid — same style as home ── */
-.gridWrap { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 8px 4px 32px; max-width: 960px; width: 100%; margin: 0 auto; box-sizing: border-box; }
+.gridWrap { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 8px 4px 32px; max-width: 960px; width: 100%; margin: 0 auto; box-sizing: border-box; overflow-y: visible; }
 
 .grid {
   display: grid;
@@ -154,7 +159,7 @@
 }
 
 .tile--active {
-  filter: drop-shadow(0 2px 8px var(--accent));
+  /* filter: drop-shadow(0 2px 8px var(--accent)); */
   opacity: 1;
   cursor: pointer;
   touch-action: manipulation;
@@ -167,19 +172,19 @@
   padding: 6px 4px 4px;
   box-shadow: 0 6px 20px var(--shadow);
   z-index: 10;
-  filter: drop-shadow(0 4px 14px var(--accent)) brightness(1.08);
+  /* filter: drop-shadow(0 4px 14px var(--accent)) brightness(1.08); */
 }
-.tile--active:active {
+/* .tile--active:active {
   transform: scale(1.06);
   transition-duration: 0.1s;
   filter: drop-shadow(0 4px 14px var(--accent)) brightness(1.08);
-}
+} */
 
 .tileGlow {
   position: absolute; inset: -3px; border-radius: 13px;
   background: transparent; border: 2px solid var(--accent);
   opacity: 0; pointer-events: none;
-  animation: glowPulse 2s ease-in-out infinite;
+  /* animation: glowPulse 2s ease-in-out infinite; */
 }
 .tile--active:hover .tileGlow { opacity: 0.5; }
 @keyframes glowPulse { 0%,100%{opacity:0.3;transform:scale(1)} 50%{opacity:0.7;transform:scale(1.04)} }

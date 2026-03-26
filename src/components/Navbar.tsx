@@ -32,7 +32,7 @@ export default function Navbar({ onContactOpen }: NavbarProps) {
     <header className={styles.navbar}>
       <div className={styles.navbar__inner}>
         {/* Brand */}
-        <Link to="/profile" className={styles.navbar__brand}>Artfolio</Link>
+        <Link to="/profile" className={styles.navbar__brand}>pockét fusions</Link>
 
         {/* Desktop nav */}
         <nav className={styles.navbar__nav}>
