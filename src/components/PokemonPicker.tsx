@@ -10,10 +10,16 @@ interface PokeOption { name: string; id: number }
 
 const SPRITE_BASE = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon'
 
+// function spriteForId(id: number) {
+//   return id <= 1025
+//     ? `${SPRITE_BASE}/other/home/${id}.png`
+//     : `${SPRITE_BASE}/other/official-artwork/${id}.png`
+// }
+
 function spriteForId(id: number) {
-  return id <= 1025
-    ? `${SPRITE_BASE}/other/home/${id}.png`
-    : `${SPRITE_BASE}/other/official-artwork/${id}.png`
+
+  return `${SPRITE_BASE}/other/home/${id}.png`
+
 }
 
 export default function PokemonPicker({ value, onChange }: PokemonPickerProps) {

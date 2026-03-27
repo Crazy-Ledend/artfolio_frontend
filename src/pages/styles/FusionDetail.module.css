@@ -316,6 +316,7 @@
   font-weight: 500;
   color: var(--ink-600);
   line-height: 1.6;
+  white-space: pre-wrap;
 }
 
 .heroTags {

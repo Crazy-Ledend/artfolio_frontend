@@ -14,13 +14,14 @@ const SKIP = ['-mega', '-gmax', '-totem', '-primal', '-origin', '-sky', '-land',
   '-full-belly', '-hero', '-teal', '-aqua', '-blaze', '-stellar']
 
 const CACHE_KEY = 'artfolio_pokemon_list'
-const CACHE_VERSION = 'v2'
+const CACHE_VERSION = 'v3'
 const CACHE_TTL = 7 * 24 * 60 * 60 * 1000 // 7 days
 
 function homeSprite(id: number) {
-  return id <= 1025
-    ? `${SPRITE_BASE}/other/home/${id}.png`
-    : `${SPRITE_BASE}/other/official-artwork/${id}.png`
+  return `${SPRITE_BASE}/other/home/${id}.png`
+  // return id <= 1025
+  //   ? `${SPRITE_BASE}/other/home/${id}.png`
+  //   : `${SPRITE_BASE}/other/official-artwork/${id}.png`
 }
 
 export function usePokemonList() {

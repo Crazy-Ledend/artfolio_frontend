@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { Pokemon, FusionArtwork, FusionMap } from '../types'
+import { FormattedText } from '../utils/formatText'
 import styles from './styles/FusionPopup.module.css'
 
 interface FusionPopupProps {
@@ -146,7 +147,7 @@ export default function FusionPopup({ poke, artworks, allFusions, allPokemon, on
                   </div>
                 )}
                 {activeArtwork.description && (
-                  <p className={styles.artDesc}>{activeArtwork.description}</p>
+                  <FormattedText text={activeArtwork.description} className={styles.artDesc} />
                 )}
                 <div className={styles.artActions}>
                   <button onClick={() => onContact(activeArtwork)} className={styles.btnEnquire}>Enquire</button>
@@ -175,8 +176,7 @@ const _nameToId: Record<string, number> = {}
 function getHomeSpriteByName(name: string): string {
   const id = _nameToId[name]
   const base = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon'
-  if (id && id <= 1025) return `${base}/other/home/${id}.png`
-  if (id) return `${base}/other/official-artwork/${id}.png`
+  if (id) return `${base}/other/home/${id}.png`
   return `${base}/other/home/0.png`
 }
 export function registerPokemonIds(list: { name: string; id: number }[]) {

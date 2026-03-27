@@ -3,6 +3,8 @@ import type React from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getFusionMap, requestFusion } from '../api/client'
 import type { Pokemon, FusionArtwork, FusionMap } from '../types'
+
+import { FormattedText } from '../utils/formatText'
 import { usePokemonList } from '../hooks/usePokemonList'
 import styles from './styles/FusionDetail.module.css'
 
@@ -306,26 +308,26 @@ export default function FusionDetail() {
               {[...poke1Megas, ...poke2Megas]
                 .filter(megaName => megaName !== poke1 && megaName !== poke2)
                 .map((megaName) => {
-                const label = getMegaLabel(megaName)
+                  const label = getMegaLabel(megaName)
 
-                return (
-                  <button
-                    key={megaName}
-                    className={`${styles.megaBtn}`}
-                    data-mega-type={label}
-                    onClick={() => {
-                      // Replace the correct side with mega form
-                      const isPoke1Mega = megaName.startsWith(poke1 ?? "")
-                      const newPoke1 = isPoke1Mega ? megaName : poke1
-                      const newPoke2 = !isPoke1Mega ? megaName : poke2
+                  return (
+                    <button
+                      key={megaName}
+                      className={`${styles.megaBtn}`}
+                      data-mega-type={label}
+                      onClick={() => {
+                        // Replace the correct side with mega form
+                        const isPoke1Mega = megaName.startsWith(poke1 ?? "")
+                        const newPoke1 = isPoke1Mega ? megaName : poke1
+                        const newPoke2 = !isPoke1Mega ? megaName : poke2
 
-                      navigate(`/fusion/${newPoke1}/${newPoke2}`)
-                    }}
-                  >
-                    {label}
-                  </button>
-                )
-              })}
+                        navigate(`/fusion/${newPoke1}/${newPoke2}`)
+                      }}
+                    >
+                      {label}
+                    </button>
+                  )
+                })}
             </div>
           )}
 
@@ -406,26 +408,26 @@ export default function FusionDetail() {
             {[...poke1Megas, ...poke2Megas]
               .filter(megaName => megaName !== poke1 && megaName !== poke2)
               .map((megaName) => {
-              const label = getMegaLabel(megaName)
+                const label = getMegaLabel(megaName)
 
-              return (
-                <button
-                  key={megaName}
-                  className={`${styles.megaBtn}`}
-                  data-mega-type={label}
-                  onClick={() => {
-                    // Replace the correct side with mega form
-                    const isPoke1Mega = megaName.startsWith(poke1 ?? "")
-                    const newPoke1 = isPoke1Mega ? megaName : poke1
-                    const newPoke2 = !isPoke1Mega ? megaName : poke2
+                return (
+                  <button
+                    key={megaName}
+                    className={`${styles.megaBtn}`}
+                    data-mega-type={label}
+                    onClick={() => {
+                      // Replace the correct side with mega form
+                      const isPoke1Mega = megaName.startsWith(poke1 ?? "")
+                      const newPoke1 = isPoke1Mega ? megaName : poke1
+                      const newPoke2 = !isPoke1Mega ? megaName : poke2
 
-                    navigate(`/fusion/${newPoke1}/${newPoke2}`)
-                  }}
-                >
-                  {label}
-                </button>
-              )
-            })}
+                      navigate(`/fusion/${newPoke1}/${newPoke2}`)
+                    }}
+                  >
+                    {label}
+                  </button>
+                )
+              })}
           </div>
         )}
 
@@ -477,17 +479,14 @@ export default function FusionDetail() {
             {(active.medium || active.year) && (
               <p className={styles.heroMeta}>{[active.medium, active.year].filter(Boolean).join(' · ')}</p>
             )}
-            {active.description && <p className={styles.heroDesc}>{active.description}</p>}
             {active.tags.length > 0 && (
               <div className={styles.heroTags}>
-                {active.tags.map(t => (
-                  <span key={t} className={styles.tag} style={getTypeTagStyle(t)}>{t}</span>
-                ))}
+                {active.tags.map(t => <span key={t} className={styles.tag} style={getTypeTagStyle(t)}>{t}</span>)}
               </div>
             )}
-            <a href={active.full_url} target="_blank" rel="noopener noreferrer" className={styles.btnView}>
-              View full resolution ↗
-            </a>
+            {active.description && (
+              <FormattedText text={active.description} className={styles.heroDesc} />
+            )}
           </div>
         )}
       </div>

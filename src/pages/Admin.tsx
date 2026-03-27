@@ -548,9 +548,7 @@ function RequestsTab({ secret }: { secret: string }) {
   const sprite = (name: string) => {
     const id = pokeIds[name]
     if (!id) return `${SPRITE_BASE}/${name}.png`
-    return id <= 1025
-      ? `${SPRITE_BASE}/other/home/${id}.png`
-      : `${SPRITE_BASE}/other/official-artwork/${id}.png`
+    return `${SPRITE_BASE}/other/home/${id}.png`
   }
 
   if (loading) return <div style={{ padding: 24, color: 'var(--ink-400)', fontFamily: 'Nunito' }}>Loading…</div>
