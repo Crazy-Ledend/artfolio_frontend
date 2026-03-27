@@ -51,12 +51,82 @@ function useEvoLine(name: string | undefined): Set<string> {
   return evoLine
 }
 
+function useMegaForms(name: string | undefined) {
+  const [megas, setMegas] = useState<string[]>([])
+
+  useEffect(() => {
+    if (!name) return
+
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const baseName = name.replace(/-mega(-[xy])?/, '')
+        const res = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${baseName}`)
+        if (!res.ok) return
+        const data = await res.json()
+
+        const varieties = data.varieties || []
+
+        const megaForms = varieties
+          .map((v: any) => v.pokemon.name)
+          .filter((n: string) => n.includes("mega"))
+
+        if (!cancelled) setMegas(megaForms)
+      } catch { }
+    })()
+
+    return () => { cancelled = true }
+  }, [name])
+
+  return megas
+}
+
+function getMegaLabel(name: string) {
+  if (name.includes("-mega-x")) return "Mega X"
+  if (name.includes("-mega-y")) return "Mega Y"
+  if (name.includes("-mega-z")) return "Mega Z"
+  return "Mega"
+}
+
 function capitalize(s: string) { return s.charAt(0).toUpperCase() + s.slice(1) }
 
 function defaultFusionName(poke1: string, poke2: string) {
   const first = poke1.slice(0, Math.floor(poke1.length / 2))
   const second = poke2.slice(Math.floor(poke2.length / 2))
   return `${first}${second}`
+}
+
+function useExtraPokemon(name: string | undefined, existing: Pokemon | undefined) {
+  const [extra, setExtra] = useState<Pokemon | undefined>()
+
+  useEffect(() => {
+    if (!name || existing) {
+      setExtra(undefined)
+      return
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
+        if (!res.ok) return
+        const data = await res.json()
+        if (!cancelled) {
+          const id = data.id
+          setExtra({
+            id,
+            name: data.name,
+            sprite: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${id}.png`,
+            spriteHome: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${id}.png`,
+            fallback: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`
+          })
+        }
+      } catch { }
+    })()
+    return () => { cancelled = true }
+  }, [name, existing])
+
+  return extra
 }
 
 // ── Pokémon type tag colours ───────────────────────────────────────────────────
@@ -94,6 +164,8 @@ export default function FusionDetail() {
   const { pokemon: allPokemon, loading: pokeLoading } = usePokemonList()
   const [fusionMap, setFusionMap] = useState<FusionMap>({})
   const poke1EvoLine = useEvoLine(poke1)
+  const poke1Megas = useMegaForms(poke1)
+  const poke2Megas = useMegaForms(poke2)
   const [fusionLoading, setFusionLoading] = useState(true)
   const [activeIdx, setActiveIdx] = useState(0)
   const [slideDir, setSlideDir] = useState<'left' | 'right' | null>(null)
@@ -108,6 +180,16 @@ export default function FusionDetail() {
       .finally(() => setFusionLoading(false))
   }, [])
 
+  const getPoke = (name: string) => allPokemon.find(p => p.name === name)
+  const basePoke1 = getPoke(poke1 ?? '')
+  const basePoke2 = getPoke(poke2 ?? '')
+
+  const extraPoke1 = useExtraPokemon(poke1, basePoke1)
+  const extraPoke2 = useExtraPokemon(poke2, basePoke2)
+
+  const poke1Data = basePoke1 ?? extraPoke1
+  const poke2Data = basePoke2 ?? extraPoke2
+
   const loading = pokeLoading || fusionLoading
 
   if (loading) return (
@@ -119,9 +201,7 @@ export default function FusionDetail() {
     </div>
   )
 
-  const getPoke = (name: string) => allPokemon.find(p => p.name === name)
-  const poke1Data = getPoke(poke1 ?? '')
-  const poke2Data = getPoke(poke2 ?? '')
+
 
   // Dedupe helper
   const dedup = (list: FusionArtwork[]) => {
@@ -221,6 +301,34 @@ export default function FusionDetail() {
             </div>
           )}
 
+          {(poke1Megas.length > 0 || poke2Megas.length > 0) && (
+            <div className={styles.megaButtons}>
+              {[...poke1Megas, ...poke2Megas]
+                .filter(megaName => megaName !== poke1 && megaName !== poke2)
+                .map((megaName) => {
+                const label = getMegaLabel(megaName)
+
+                return (
+                  <button
+                    key={megaName}
+                    className={`${styles.megaBtn}`}
+                    data-mega-type={label}
+                    onClick={() => {
+                      // Replace the correct side with mega form
+                      const isPoke1Mega = megaName.startsWith(poke1 ?? "")
+                      const newPoke1 = isPoke1Mega ? megaName : poke1
+                      const newPoke2 = !isPoke1Mega ? megaName : poke2
+
+                      navigate(`/fusion/${newPoke1}/${newPoke2}`)
+                    }}
+                  >
+                    {label}
+                  </button>
+                )
+              })}
+            </div>
+          )}
+
           {/* Placeholder image — replace src with your GDrive link */}
           <div className={styles.noFusionImgWrap}>
             <img
@@ -292,6 +400,34 @@ export default function FusionDetail() {
           <span className={styles.fusionX}>×</span>
           <PokeChip poke={poke2Data} />
         </div>
+
+        {(poke1Megas.length > 0 || poke2Megas.length > 0) && (
+          <div className={styles.megaButtons}>
+            {[...poke1Megas, ...poke2Megas]
+              .filter(megaName => megaName !== poke1 && megaName !== poke2)
+              .map((megaName) => {
+              const label = getMegaLabel(megaName)
+
+              return (
+                <button
+                  key={megaName}
+                  className={`${styles.megaBtn}`}
+                  data-mega-type={label}
+                  onClick={() => {
+                    // Replace the correct side with mega form
+                    const isPoke1Mega = megaName.startsWith(poke1 ?? "")
+                    const newPoke1 = isPoke1Mega ? megaName : poke1
+                    const newPoke2 = !isPoke1Mega ? megaName : poke2
+
+                    navigate(`/fusion/${newPoke1}/${newPoke2}`)
+                  }}
+                >
+                  {label}
+                </button>
+              )
+            })}
+          </div>
+        )}
 
         {/* Hero image — with multi-artwork slider when there's more than one */}
         <div className={styles.heroImageWrap}>
