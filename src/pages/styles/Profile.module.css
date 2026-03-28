@@ -325,6 +325,28 @@
   color: var(--ink-400);
 }
 
+/* Bottom Decor Image */
+.bottomDecorContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: -10px;
+  margin-bottom: 20px;
+  z-index: 10;
+  position: relative;
+}
+
+.bottomDecorImage {
+  max-width: 200px;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 12px var(--shadow));
+}
+
+.bottomDecorImage:hover {
+  transform: scale(1.05);
+  transition: ease 0.2s transform;
+}
+
 /* Footer decors */
 .footerDecor {
   position: relative;

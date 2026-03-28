@@ -151,7 +151,14 @@ export default function Profile() {
         )}
       </div>
 
+      <div className={styles.bottomDecorContainer}>
+        <img src="/assets/pikachu_sleeping.png" alt="Footer Decor" className={styles.bottomDecorImage} />
+      </div>
+
       <div className={styles.footerDecor}>
+        {/* <div className={styles.bottomDecorContainer}>
+          <img src="/assets/pikachu_sleeping.png" alt="Footer Decor" className={styles.bottomDecorImage} />
+        </div> */}
         {/* <div className="spiral"></div> */}
         <Spiral size={40} color="var(--decor-spiral-1)" left="10%" bottom="120px"></Spiral>
         <Spiral size={30} color="var(--decor-spiral-2)" right="10%" bottom="20px"></Spiral>
