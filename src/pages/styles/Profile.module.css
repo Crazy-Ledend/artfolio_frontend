@@ -336,7 +336,7 @@
 }
 
 .bottomDecorImage {
-  max-width: 200px;
+  max-width: 500px;
   height: auto;
   object-fit: contain;
   filter: drop-shadow(0 4px 12px var(--shadow));

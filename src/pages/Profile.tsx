@@ -114,15 +114,15 @@ export default function Profile() {
             value={profile.stats?.artworks}
             label="Artworks"
             icon="🎨"
-            decorLeft="https://i.imgur.com/vI6ivr9.gif"
-            decorRight="https://media.tenor.com/gxvJFh-wA88AAAAj/cuphead.gif"
+          // decorLeft="https://i.imgur.com/vI6ivr9.gif"
+          // decorRight="https://media.tenor.com/gxvJFh-wA88AAAAj/cuphead.gif"
           />
           <StatCard
             value={profile.stats?.fusions}
             label="Pokémon fused"
             icon="⚡"
-            decorLeft=""
-            decorRight="https://64.media.tumblr.com/ac6298e7c104808c1de343970b13415f/tumblr_mg6ab0EPEN1r8r6mfo1_250.gif"
+          // decorLeft=""
+          // decorRight="https://64.media.tumblr.com/ac6298e7c104808c1de343970b13415f/tumblr_mg6ab0EPEN1r8r6mfo1_250.gif"
           />
         </div>
 
@@ -161,8 +161,8 @@ export default function Profile() {
         </div> */}
         {/* <div className="spiral"></div> */}
         <Spiral size={40} color="var(--decor-spiral-1)" left="10%" bottom="120px"></Spiral>
-        <Spiral size={30} color="var(--decor-spiral-2)" right="10%" bottom="20px"></Spiral>
-        <Spiral size={25} color="var(--decor-spiral-3)" left="25%" bottom="100px"></Spiral>
+        {/* <Spiral size={30} color="var(--decor-spiral-2)" right="10%" bottom="20px"></Spiral> */}
+        <Spiral size={25} color="var(--decor-spiral-3)" right="25%" bottom="100px"></Spiral>
         <div className="wavy-line"></div>
       </div>
     </div>
