@@ -1,7 +1,43 @@
 import { useState, useEffect } from 'react'
 import { getProfile } from '../api/client'
-import type { ArtistProfile, SocialLink } from '../types'
+import type { ArtistProfile, SocialLink, SpiralProps, DecorImageProps } from '../types'
 import styles from './styles/Profile.module.css'
+
+export function DecorImage({ src, size = 44, top, bottom, left, right }: DecorImageProps) {
+  if (!src) return null;
+  return (
+    <img
+      src={src}
+      alt=""
+      style={{
+        position: 'absolute',
+        top,
+        bottom,
+        left,
+        right,
+        width: `${size}px`,
+        height: `${size}px`,
+        objectFit: 'contain',
+        pointerEvents: 'none',
+        zIndex: 10
+      } as React.CSSProperties}
+    />
+  );
+}
+
+export function Spiral({
+  size = 45,
+  thickness = 4,
+  color = "#f05f4c",
+  left,
+  right,
+  top,
+  bottom
+}: SpiralProps) {
+  return (
+    <div className="spiral" style={{ left, right, top, bottom, "--s": `${size}px`, "--b": `${thickness}px`, "--c": color } as React.CSSProperties} />
+  );
+}
 
 export default function Profile() {
   const [profile, setProfile] = useState<ArtistProfile | null>(null)
@@ -74,8 +110,20 @@ export default function Profile() {
 
         {/* Stats row */}
         <div className={styles.statsRow}>
-          <StatCard value={profile.stats?.artworks} label="Artworks" icon="🎨" />
-          <StatCard value={profile.stats?.fusions} label="Pokémon fused" icon="⚡" />
+          <StatCard
+            value={profile.stats?.artworks}
+            label="Artworks"
+            icon="🎨"
+            decorLeft="https://i.imgur.com/vI6ivr9.gif"
+            decorRight="https://media.tenor.com/gxvJFh-wA88AAAAj/cuphead.gif"
+          />
+          <StatCard
+            value={profile.stats?.fusions}
+            label="Pokémon fused"
+            icon="⚡"
+            decorLeft=""
+            decorRight="https://64.media.tumblr.com/ac6298e7c104808c1de343970b13415f/tumblr_mg6ab0EPEN1r8r6mfo1_250.gif"
+          />
         </div>
 
         {/* Bio */}
@@ -93,7 +141,7 @@ export default function Profile() {
             <div className={styles.socialsList}>
               {profile.socials?.map(s => (
                 <a key={s.platform} href={s.url} target="_blank" rel="noopener noreferrer" className={styles.socialRow}>
-                  <SocialIcon social={s} size="md" />
+                  <SocialIcon social={s} size="md" asDiv />
                   <span className={styles.socialPlatform}>{platformLabel(s.platform)}</span>
                   <span className={styles.socialArrow}>↗</span>
                 </a>
@@ -102,13 +150,23 @@ export default function Profile() {
           </div>
         )}
       </div>
+
+      <div className={styles.footerDecor}>
+        {/* <div className="spiral"></div> */}
+        <Spiral size={40} color="var(--decor-spiral-1)" left="10%" bottom="120px"></Spiral>
+        <Spiral size={30} color="var(--decor-spiral-2)" right="10%" bottom="20px"></Spiral>
+        <Spiral size={25} color="var(--decor-spiral-3)" left="25%" bottom="100px"></Spiral>
+        <div className="wavy-line"></div>
+      </div>
     </div>
   )
 }
 
-function StatCard({ value, label, icon }: { value: number; label: string; icon: string }) {
+function StatCard({ value, label, icon, decorLeft, decorRight }: { value: number; label: string; icon: string; decorLeft?: string; decorRight?: string }) {
   return (
     <div className={styles.statCard}>
+      {decorLeft && <DecorImage src={decorLeft} top="-18px" left="-18px" />}
+      {decorRight && <DecorImage src={decorRight} top="-18px" right="-18px" />}
       <span className={styles.statIcon}>{icon}</span>
       <span className={styles.statValue}>{value}</span>
       <span className={styles.statLabel}>{label}</span>
@@ -116,15 +174,16 @@ function StatCard({ value, label, icon }: { value: number; label: string; icon: 
   )
 }
 
-function SocialIcon({ social, size = 'sm' }: { social: SocialLink; size?: 'sm' | 'md' }) {
+function SocialIcon({ social, size = 'sm', asDiv = false }: { social: SocialLink; size?: 'sm' | 'md'; asDiv?: boolean }) {
   const icon = SOCIAL_ICONS[social.platform] ?? SOCIAL_ICONS.website
   const cls = size === 'md' ? styles.socialIconMd : styles.socialIconSm
+  const Comp = asDiv ? 'div' : 'a'
 
   return (
-    <a
-      href={social.url}
-      target="_blank"
-      rel="noopener noreferrer"
+    <Comp
+      href={asDiv ? undefined : social.url}
+      target={asDiv ? undefined : '_blank'}
+      rel={asDiv ? undefined : 'noopener noreferrer'}
       className={`${styles.socialIconWrap} ${cls}`}
       title={platformLabel(social.platform)}
       style={{ background: icon.bg }}
@@ -132,7 +191,7 @@ function SocialIcon({ social, size = 'sm' }: { social: SocialLink; size?: 'sm' |
       <svg viewBox={icon.viewBox} fill={icon.fill} className={styles.socialSvg}>
         <path d={icon.path} />
       </svg>
-    </a>
+    </Comp>
   )
 }
 

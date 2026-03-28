@@ -152,3 +152,24 @@ export interface FusionRequest {
   votes: number
   created_at: string
 }
+
+// Spirals
+export type SpiralProps = {
+  size?: number;
+  thickness?: number;
+  color?: string;
+  left?: string;
+  right?: string;
+  top?: string;
+  bottom?: string;
+};
+
+// Corner Images
+export type DecorImageProps = {
+  src: string;
+  size?: number;
+  top?: string;
+  bottom?: string;
+  left?: string;
+  right?: string;
+};

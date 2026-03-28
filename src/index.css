@@ -28,6 +28,10 @@
   --glass-bg-mega: rgba(255, 220, 230, 0.922);
   --glass-border-mega: rgba(255, 150, 180, 0.2);
   --glass-input-mega: rgba(255, 200, 220, 0.15);
+  --decor-spiral-1: #fb8888;
+  --decor-spiral-2: #59c82d;
+  --decor-spiral-3: #5190f5;
+  --decor-wave: #10cdcd;
 }
 
 /* ── Dark theme ── */
@@ -54,6 +58,10 @@
   --glass-bg-mega: rgba(45, 20, 35, 0.15);
   --glass-border-mega: rgba(180, 100, 140, 0.2);
   --glass-input-mega: rgba(60, 25, 45, 0.2);
+  --decor-spiral-1: #ff6b6b;
+  --decor-spiral-2: #6bff75;
+  --decor-spiral-3: #417fe5;
+  --decor-wave: #10cdcd;
 }
 
 @layer base {
