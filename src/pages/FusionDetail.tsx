@@ -26,7 +26,11 @@ function useEvoLine(name: string | undefined): Set<string> {
     let cancelled = false
       ; (async () => {
         try {
-          const speciesRes = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${name}`)
+          const pokeRes = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
+          if (!pokeRes.ok) return
+          const pokeData = await pokeRes.json()
+
+          const speciesRes = await fetch(pokeData.species.url)
           if (!speciesRes.ok) return
           const species = await speciesRes.json()
           const chainRes = await fetch(species.evolution_chain.url)
@@ -53,45 +57,120 @@ function useEvoLine(name: string | undefined): Set<string> {
   return evoLine
 }
 
-function useMegaForms(name: string | undefined) {
-  const [megas, setMegas] = useState<string[]>([])
+function useForms(name: string | undefined) {
+  const [data, setData] = useState<{baseName: string, forms: string[]}>({ baseName: '', forms: [] })
 
   useEffect(() => {
-    if (!name) return
+    if (!name) {
+      setData({ baseName: '', forms: [] })
+      return
+    }
 
     let cancelled = false;
 
     (async () => {
       try {
-        const baseName = name.replace(/-mega(-[xy])?/, '')
-        const res = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${baseName}`)
+        const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
         if (!res.ok) return
-        const data = await res.json()
+        const pData = await res.json()
 
-        const varieties = data.varieties || []
+        const speciesUrl = pData.species.url
+        const baseName = pData.species.name
+        
+        const sRes = await fetch(speciesUrl)
+        if (!sRes.ok) return
+        const sData = await sRes.json()
 
-        const megaForms = varieties
+        const formNames = sData.varieties
           .map((v: any) => v.pokemon.name)
-          .filter((n: string) => n.includes("mega"))
+          .filter((n: string) => n !== name)
 
-        if (!cancelled) setMegas(megaForms)
+        if (!cancelled) {
+           setData({ baseName, forms: formNames })
+        }
       } catch { }
     })()
 
     return () => { cancelled = true }
   }, [name])
 
-  return megas
+  return data
 }
 
-function getMegaLabel(name: string) {
-  if (name.includes("-mega-x")) return "Mega X"
-  if (name.includes("-mega-y")) return "Mega Y"
-  if (name.includes("-mega-z")) return "Mega Z"
-  return "Mega"
+function getFormLabel(formName: string, baseName: string) {
+  if (formName === baseName) return "Base Form"
+  if (formName.includes("-mega-x")) return "Mega X"
+  if (formName.includes("-mega-y")) return "Mega Y"
+  if (formName.includes("-mega-z")) return "Mega Z"
+  if (formName.includes("-mega")) return "Mega"
+  
+  if (formName.startsWith(baseName + '-')) {
+    return formName.slice(baseName.length + 1).split('-').map(capitalize).join(' ')
+  }
+  return capitalize(formName)
 }
 
-function capitalize(s: string) { return s.charAt(0).toUpperCase() + s.slice(1) }
+function capitalize(s: string) {
+  if (!s) return ''
+  return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
+function FormSelector({
+  currentName,
+  baseName,
+  forms,
+  otherPoke,
+  isFirst,
+  navigate
+}: {
+  currentName: string,
+  baseName: string,
+  forms: string[],
+  otherPoke: string,
+  isFirst: boolean,
+  navigate: ReturnType<typeof useNavigate>
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClick)
+    return () => document.removeEventListener("mousedown", handleClick)
+  }, [])
+
+  if (forms.length === 0) return null
+
+  return (
+    <div className={styles.formSelector} ref={ref}>
+      <button onClick={() => setOpen(!open)} className={styles.formSelectorBtn}>
+        {capitalize(currentName)} Forms <span className={styles.formSelectorArrow}>▼</span>
+      </button>
+      {open && (
+        <div className={styles.formSelectorPopup}>
+          {forms.map(formName => (
+            <button
+              key={formName}
+              className={styles.formSelectorOption}
+              onClick={() => {
+                 setOpen(false)
+                 const p1 = isFirst ? formName : otherPoke
+                 const p2 = isFirst ? otherPoke : formName
+                 navigate(`/fusion/${p1}/${p2}`)
+              }}
+            >
+              {getFormLabel(formName, baseName)}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
 function defaultFusionName(poke1: string, poke2: string) {
   const first = poke1.slice(0, Math.floor(poke1.length / 2))
@@ -166,8 +245,8 @@ export default function FusionDetail() {
   const { pokemon: allPokemon, loading: pokeLoading } = usePokemonList()
   const [fusionMap, setFusionMap] = useState<FusionMap>({})
   const poke1EvoLine = useEvoLine(poke1)
-  const poke1Megas = useMegaForms(poke1)
-  const poke2Megas = useMegaForms(poke2)
+  const { baseName: poke1Base, forms: poke1Forms } = useForms(poke1)
+  const { baseName: poke2Base, forms: poke2Forms } = useForms(poke2)
   const [fusionLoading, setFusionLoading] = useState(true)
   const [activeIdx, setActiveIdx] = useState(0)
   const [slideDir, setSlideDir] = useState<'left' | 'right' | null>(null)
@@ -303,31 +382,28 @@ export default function FusionDetail() {
             </div>
           )}
 
-          {(poke1Megas.length > 0 || poke2Megas.length > 0) && (
-            <div className={styles.megaButtons}>
-              {[...poke1Megas, ...poke2Megas]
-                .filter(megaName => megaName !== poke1 && megaName !== poke2)
-                .map((megaName) => {
-                  const label = getMegaLabel(megaName)
-
-                  return (
-                    <button
-                      key={megaName}
-                      className={`${styles.megaBtn}`}
-                      data-mega-type={label}
-                      onClick={() => {
-                        // Replace the correct side with mega form
-                        const isPoke1Mega = megaName.startsWith(poke1 ?? "")
-                        const newPoke1 = isPoke1Mega ? megaName : poke1
-                        const newPoke2 = !isPoke1Mega ? megaName : poke2
-
-                        navigate(`/fusion/${newPoke1}/${newPoke2}`)
-                      }}
-                    >
-                      {label}
-                    </button>
-                  )
-                })}
+          {(poke1Forms.length > 0 || poke2Forms.length > 0) && (
+            <div className={styles.formsRow}>
+              {poke1Forms.length > 0 && (
+                <FormSelector 
+                  currentName={poke1!} 
+                  baseName={poke1Base}
+                  forms={poke1Forms} 
+                  otherPoke={poke2!} 
+                  isFirst={true} 
+                  navigate={navigate} 
+                />
+              )}
+              {poke2Forms.length > 0 && (
+                <FormSelector 
+                  currentName={poke2!} 
+                  baseName={poke2Base}
+                  forms={poke2Forms} 
+                  otherPoke={poke1!} 
+                  isFirst={false} 
+                  navigate={navigate} 
+                />
+              )}
             </div>
           )}
 
@@ -403,31 +479,28 @@ export default function FusionDetail() {
           <PokeChip poke={poke2Data} />
         </div>
 
-        {(poke1Megas.length > 0 || poke2Megas.length > 0) && (
-          <div className={styles.megaButtons}>
-            {[...poke1Megas, ...poke2Megas]
-              .filter(megaName => megaName !== poke1 && megaName !== poke2)
-              .map((megaName) => {
-                const label = getMegaLabel(megaName)
-
-                return (
-                  <button
-                    key={megaName}
-                    className={`${styles.megaBtn}`}
-                    data-mega-type={label}
-                    onClick={() => {
-                      // Replace the correct side with mega form
-                      const isPoke1Mega = megaName.startsWith(poke1 ?? "")
-                      const newPoke1 = isPoke1Mega ? megaName : poke1
-                      const newPoke2 = !isPoke1Mega ? megaName : poke2
-
-                      navigate(`/fusion/${newPoke1}/${newPoke2}`)
-                    }}
-                  >
-                    {label}
-                  </button>
-                )
-              })}
+        {(poke1Forms.length > 0 || poke2Forms.length > 0) && (
+          <div className={styles.formsRow}>
+            {poke1Forms.length > 0 && (
+              <FormSelector 
+                currentName={poke1!} 
+                baseName={poke1Base}
+                forms={poke1Forms} 
+                otherPoke={poke2!} 
+                isFirst={true} 
+                navigate={navigate} 
+              />
+            )}
+            {poke2Forms.length > 0 && (
+              <FormSelector 
+                currentName={poke2!} 
+                baseName={poke2Base}
+                forms={poke2Forms} 
+                otherPoke={poke1!} 
+                isFirst={false} 
+                navigate={navigate} 
+              />
+            )}
           </div>
         )}
 

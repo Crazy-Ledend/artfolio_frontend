@@ -700,69 +700,88 @@
   /* 0 = invisible, 1 = full */
 }
 
-/* Mega fusions */
-.megaButtons {
+/* Form selectors */
+.formsRow {
   display: flex;
-  gap: 8px;
-  margin-top: 10px;
+  gap: 12px;
   justify-content: center;
-  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 10px;
 }
 
-.megaBtn {
-  padding: 6px 14px;
-  border-radius: 12px;
+.formSelector {
+  position: relative;
+}
+
+.formSelectorBtn {
   font-family: 'Nunito', sans-serif;
   font-size: 13px;
   font-weight: 800;
-  cursor: pointer;
-  background: var(--glass-bg-mega);
+  color: var(--ink-700);
+  background: var(--glass-bg);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 2px solid transparent;
-  color: var(--ink-800);
-  background-clip: padding-box;
-  position: relative;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s, color 0.2s, background 0.2s;
-}
-
-/* Pseudo-element for gradient border */
-.megaBtn::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 14px;
   border: 2px solid var(--glass-border);
-  background: var(--mega-grad, linear-gradient(135deg, #ff7a7a, #a0306a, #4a00b0, #2060a0));
-  color: var(--ink-200);
-  z-index: -1;
-  opacity: 0.4;
-  transition: opacity 0.2s;
-  /* background: var(--glass-bg); */
-  /* border-color: var(--glass-border); */
-  /* background: linear-gradient(135deg, #ff7a7a, #a0306a, #4a00b0, #2060a0); */
+  padding: 8px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
 }
 
-.megaBtn:hover {
-  /* transform: translateY(-2px); */
-  transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-  color: var(--ink-100);
+.formSelectorBtn:hover {
+  background: var(--glass-input);
+  transform: translateY(-1px);
 }
 
-.megaBtn:hover::before {
-  opacity: 0.7;
+.formSelectorArrow {
+  font-size: 10px;
+  color: var(--ink-400);
 }
 
-/* Variant Gradients */
-.megaBtn[data-mega-type="Mega X"] {
-  --mega-grad: linear-gradient(135deg, #a0d8ef, #4bb5ff, #0a6bd1);
+.formSelectorPopup {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 8px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 2px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 10;
+  min-width: 140px;
+  box-shadow: 0 8px 32px var(--shadow);
+  animation: popDown 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-.megaBtn[data-mega-type="Mega Y"] {
-  --mega-grad: linear-gradient(135deg, #ffdca0, #ff8c42, #db4a16);
+@keyframes popDown {
+  from { opacity: 0; transform: translate(-50%, -10px) scale(0.95); }
+  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
 }
 
-.megaBtn[data-mega-type="Mega Z"] {
-  --mega-grad: linear-gradient(135deg, #a0ffd8, #18d8a0, #0a8972);
+.formSelectorOption {
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-700);
+  background: transparent;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+
+.formSelectorOption:hover {
+  background: rgba(255, 255, 255, 0.4);
+  color: var(--ink-800);
 }
