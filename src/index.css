@@ -65,12 +65,15 @@
 }
 
 @layer base {
-  html {
+  html, body {
     font-family: 'Nunito', sans-serif;
     -webkit-font-smoothing: antialiased;
-    background: var(--bg-start);
+    background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-mid) 40%, var(--bg-end) 100%);
+    background-attachment: fixed;
     color: var(--ink-800);
     transition: background 0.3s ease, color 0.3s ease;
+    margin: 0;
+    min-height: 100vh;
   }
 
   * {
@@ -181,7 +184,7 @@
     position: relative;
     right: auto;
     bottom: auto;
-    margin: 0px auto 30px auto;
+    margin: 10px 20px 30px auto; 
     width: max-content;
     z-index: 10;
   }
