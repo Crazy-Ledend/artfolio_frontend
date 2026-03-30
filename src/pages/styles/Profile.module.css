@@ -411,7 +411,7 @@
 
   transition: ease-out 1s;
 
-  z-index: 999;
+  z-index: 100;
 }
 
 :global(.spiral:hover) {
@@ -431,7 +431,7 @@
   -webkit-backdrop-filter: blur(16px);
   border-radius: 12px;
   padding: 8px 16px;
-  z-index: 200;
+  z-index: 999;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -455,5 +455,5 @@
   width: 26px;
   height: 26px;
   object-fit: contain;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }

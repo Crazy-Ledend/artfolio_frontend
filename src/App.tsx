@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Gallery from './pages/Gallery'
 import Collections from './pages/Collections'
@@ -11,6 +11,9 @@ import CollectionDetail from './pages/CollectionDetail'
 import ContactModal from './components/ContactModal'
 
 function DevBadge() {
+  const { pathname } = useLocation()
+  if (pathname.startsWith('/profile') || pathname.startsWith('/admin')) return null
+
   return (
     <a href="https://discord.gg/WxvEhxG5Q5" target="_blank" rel="noopener noreferrer" className="dev-badge">
       <div className="dev-badge-dot"></div>

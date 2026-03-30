@@ -175,3 +175,14 @@
 .dev-badge:hover .dev-badge-text-hover {
   display: inline;
 }
+
+@media (max-width: 768px) {
+  .dev-badge {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    margin: 0px auto 30px auto;
+    width: max-content;
+    z-index: 10;
+  }
+}
