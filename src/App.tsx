@@ -10,12 +10,22 @@ import FusionDetail from './pages/FusionDetail'
 import CollectionDetail from './pages/CollectionDetail'
 import ContactModal from './components/ContactModal'
 
+function DevBadge() {
+  return (
+    <a href="https://discord.gg/WxvEhxG5Q5" target="_blank" rel="noopener noreferrer" className="dev-badge">
+      <div className="dev-badge-dot"></div>
+      <span className="dev-badge-text">&lt;/crazypokeking&gt; — dev</span>
+      <span className="dev-badge-text-hover">hazeltech 🦕</span>
+    </a>
+  )
+}
+
 export default function App() {
   const [contactOpen, setContactOpen] = useState(false)
 
   // Wake up Render backend immediately on app load
   useEffect(() => {
-    fetch('/api/ping').catch(() => {})
+    fetch('/api/ping').catch(() => { })
   }, [])
 
   return (
@@ -32,6 +42,7 @@ export default function App() {
           <Route path="/collections/:id" element={<CollectionDetail />} />
         </Routes>
       </div>
+      <DevBadge />
       {contactOpen && <ContactModal onClose={() => setContactOpen(false)} />}
     </BrowserRouter>
   )
