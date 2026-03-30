@@ -419,3 +419,41 @@
   transition: ease-in 1s rotate;
   rotate: 180deg;
 }
+
+/* Kofi Badge */
+.kofiBadge {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: var(--glass-bg);
+  border: 2px solid var(--glass-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 12px;
+  padding: 8px 16px;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink-800);
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 16px var(--shadow);
+}
+
+.kofiBadge:hover {
+  transform: translateY(-3px);
+  background: var(--glass-input);
+  box-shadow: 0 8px 24px var(--shadow);
+}
+
+.kofiIcon {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}

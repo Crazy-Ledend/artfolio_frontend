@@ -165,7 +165,17 @@ export default function Profile() {
         <Spiral size={25} color="var(--decor-spiral-3)" right="25%" bottom="100px"></Spiral>
         <div className="wavy-line"></div>
       </div>
+      <KofiBadge />
     </div>
+  )
+}
+
+function KofiBadge() {
+  return (
+    <a href="https://ko-fi.com/shellyeah" target="_blank" rel="noopener noreferrer" className={styles.kofiBadge}>
+      <img src="https://storage.ko-fi.com/cdn/cuplogo-sm.png" alt="Ko-fi logo" className={styles.kofiIcon} />
+      <span>Support me on Ko-fi</span>
+    </a>
   )
 }
 
