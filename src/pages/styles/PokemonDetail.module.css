@@ -90,31 +90,104 @@
 
 .filterWrapper {
   position: relative;
-  z-index: 999;
-  flex: 0 0 auto;
-  min-width: 0;
-  max-width: 100%;
+  z-index: 100;
+  display: flex;
+  justify-content: flex-end;
 }
 
-.filterSelect {
-  min-width: 170px; padding: 10px 14px; border-radius: 14px; border: 2px solid var(--glass-border);
-  background: var(--glass-input); color: var(--ink-700);
-  font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.02em;
-  cursor: pointer; outline: none; transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.15s;
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+.filterSelector {
   position: relative;
-  z-index: 1000;
-  max-width: 100%;
-  box-sizing: border-box;
 }
-.filterSelect:focus {
-  border-color: var(--accent); color: var(--ink-900);
-  box-shadow: 0 0 0 3px rgba(57, 163, 255, 0.23);
+
+.filterSelectorBtn {
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--ink-700);
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 2px solid var(--glass-border);
+  padding: 8px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  min-width: 160px;
+  justify-content: space-between;
+}
+
+.filterSelectorBtn:hover {
+  background: var(--glass-input);
   transform: translateY(-1px);
 }
-.filterSelect:hover { background: var(--glass-bg); border-color: var(--glass-border); color: var(--ink-800); }
-.filterSelect option { background: var(--canvas); color: var(--ink-800); padding: 8px; }
+
+.filterSelectorArrow {
+  font-size: 10px;
+  color: var(--ink-400);
+}
+
+.filterSelectorPopup {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 2px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 10;
+  min-width: 180px;
+  box-shadow: 0 8px 32px var(--shadow);
+  animation: popDown 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes popDown {
+  from { opacity: 0; transform: translateY(-10px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.filterSelectorOption {
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-600);
+  background: none;
+  border: none;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filterSelectorOption:hover {
+  background: var(--glass-input);
+  color: var(--ink-800);
+}
+
+.filterSelectorOptionActive {
+  background: var(--ink-700);
+  color: var(--canvas);
+}
+
+.filterSelectorOptionActive:hover {
+  background: var(--ink-800);
+}
+
+.filterCheck {
+  font-size: 12px;
+}
 
 @media (max-width: 600px) {
   .searchWrap {
@@ -125,7 +198,7 @@
     width: 100%;
   }
 
-  .filterSelect {
+  .filterSelectorBtn {
     width: 100%;
     min-width: 0;
   }

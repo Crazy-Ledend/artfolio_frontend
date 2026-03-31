@@ -119,9 +119,9 @@
 .hamburger--open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
 
 .dropdown {
-  position: fixed;
-  top: calc(100% + 10px);
-  right: 2%;
+  position: absolute;
+  top: 64px; /* 50px inner + 4px padding + 10px gap */
+  right: 16px;
 
   width: min(360px, calc(100vw - 32px));
   min-width: 220px;
@@ -165,7 +165,7 @@
 }
 
 @media (max-width: 900px) {
-  .dropdown { top: calc(100% + 10px); right: 2%; width: auto;}
+  .dropdown { top: 64px; right: 16px; width: auto;}
   .dropItem { font-size: 16px; padding: 12px 14px; }
 }
 @keyframes dropIn { from{opacity:0;transform:scale(0.95) translateY(-6px)} to{opacity:1;transform:scale(1) translateY(0)} }

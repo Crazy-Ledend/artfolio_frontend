@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getFusionMap } from '../api/client'
 import type { FusionMap } from '../types'
@@ -6,6 +6,57 @@ import { usePokemonList } from '../hooks/usePokemonList'
 import styles from './styles/PokemonDetail.module.css'
 
 function capitalize(s: string) { return s.charAt(0).toUpperCase() + s.slice(1) }
+
+function FilterSelector({
+  value,
+  onChange
+}: {
+  value: 'all' | 'available',
+  onChange: (val: 'all' | 'available') => void
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener("mousedown", handleClick)
+    return () => document.removeEventListener("mousedown", handleClick)
+  }, [])
+
+  const options: { label: string; value: 'all' | 'available' }[] = [
+    { label: 'All Pokémon', value: 'all' },
+    { label: 'Available Fusions', value: 'available' }
+  ]
+
+  return (
+    <div className={styles.filterSelector} ref={ref}>
+      <button onClick={() => setOpen(!open)} className={styles.filterSelectorBtn}>
+        <span>{options.find(o => o.value === value)?.label}</span>
+        <span className={styles.filterSelectorArrow}>▼</span>
+      </button>
+
+      {open && (
+        <div className={styles.filterSelectorPopup}>
+          {options.map(opt => (
+            <button
+              key={opt.value}
+              className={`${styles.filterSelectorOption} ${value === opt.value ? styles.filterSelectorOptionActive : ''}`}
+              onClick={() => {
+                onChange(opt.value)
+                setOpen(false)
+              }}
+            >
+              <span>{opt.label}</span>
+              {value === opt.value && <span className={styles.filterCheck}>✓</span>}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
 export default function PokemonDetail() {
   const { name } = useParams<{ name: string }>()
@@ -113,14 +164,10 @@ export default function PokemonDetail() {
           )}
         </div>
         <div className={styles.filterWrapper}>
-          <select
+          <FilterSelector
             value={filterMode}
-            onChange={e => setFilterMode(e.target.value as 'all' | 'available')}
-            className={styles.filterSelect}
-          >
-            <option value="all">All Pokémon</option>
-            <option value="available">Available fusions</option>
-          </select>
+            onChange={(val) => setFilterMode(val)}
+          />
         </div>
       </div>
 

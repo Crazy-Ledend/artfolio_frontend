@@ -1,9 +1,60 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { usePokemonList } from '../hooks/usePokemonList'
 import { useNavigate } from 'react-router-dom'
 import { getFusionMap } from '../api/client'
 import type { Pokemon, FusionMap } from '../types'
 import styles from './styles/Gallery.module.css'
+
+function FilterSelector({
+  value,
+  onChange
+}: {
+  value: 'all' | 'fused',
+  onChange: (val: 'all' | 'fused') => void
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener("mousedown", handleClick)
+    return () => document.removeEventListener("mousedown", handleClick)
+  }, [])
+
+  const options: { label: string; value: 'all' | 'fused' }[] = [
+    { label: 'All Pokémon', value: 'all' },
+    { label: 'Available Fusions', value: 'fused' }
+  ]
+
+  return (
+    <div className={styles.filterSelector} ref={ref}>
+      <button onClick={() => setOpen(!open)} className={styles.filterSelectorBtn}>
+        <span>{options.find(o => o.value === value)?.label}</span>
+        <span className={styles.filterSelectorArrow}>▼</span>
+      </button>
+
+      {open && (
+        <div className={styles.filterSelectorPopup}>
+          {options.map(opt => (
+            <button
+              key={opt.value}
+              className={`${styles.filterSelectorOption} ${value === opt.value ? styles.filterSelectorOptionActive : ''}`}
+              onClick={() => {
+                onChange(opt.value)
+                setOpen(false)
+              }}
+            >
+              <span>{opt.label}</span>
+              {value === opt.value && <span className={styles.filterCheck}>✓</span>}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
 export default function Gallery() {
   const navigate = useNavigate()
@@ -11,6 +62,7 @@ export default function Gallery() {
   const [fusionMap, setFusionMap] = useState<FusionMap>({})
   const [fusionLoading, setFusionLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [filterMode, setFilterMode] = useState<'all' | 'fused'>('all')
   const loading = pokeLoading || fusionLoading
 
   useEffect(() => {
@@ -26,9 +78,11 @@ export default function Gallery() {
     name in fusionMap && fusionMap[name].length > 0
     , [fusionMap])
 
-  const filtered = search
-    ? pokemon.filter(p => p.name.includes(search.toLowerCase()))
-    : pokemon
+  const filtered = pokemon.filter(p => {
+    const matchesSearch = search ? p.name.includes(search.toLowerCase()) : true
+    const matchesFilter = filterMode === 'fused' ? hasFusion(p.name) : true
+    return matchesSearch && matchesFilter
+  })
 
   return (
     <div className={styles.page}>
@@ -62,9 +116,14 @@ export default function Gallery() {
           </div>
 
           <div className={styles.legend}>
-            <span className={styles.legendItem}><span className={styles.legendDotActive} /> Has fusion art</span>
-            <span className={styles.legendItem}><span className={styles.legendDotInactive} /> No fusion yet</span>
-            <span className={styles.legendCount}>{Object.keys(fusionMap).length} fused</span>
+            <div className={styles.legendLeft}>
+              <span className={styles.legendItem}><span className={styles.legendDotActive} /> Has fusion art</span>
+              <span className={styles.legendItem}><span className={styles.legendDotInactive} /> No fusion yet</span>
+            </div>
+            {/* <span className={styles.legendCount}>{Object.keys(fusionMap).length} fused</span> */}
+            <div className={styles.filterWrapper}>
+              <FilterSelector value={filterMode} onChange={setFilterMode} />
+            </div>
           </div>
         </div>
 
