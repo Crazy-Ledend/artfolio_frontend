@@ -15,7 +15,7 @@ function DevBadge() {
   if (pathname.startsWith('/profile') || pathname.startsWith('/admin')) return null
 
   return (
-    <a href="https://discord.gg/WxvEhxG5Q5" target="_blank" rel="noopener noreferrer" className="dev-badge">
+    <a href="https://hazeltech-dev.vercel.app/" target="_blank" rel="noopener noreferrer" className="dev-badge">
       <div className="dev-badge-dot"></div>
       <span className="dev-badge-text">&lt;/crazypokeking&gt; — dev</span>
       <span className="dev-badge-text-hover">hazeltech 🦕</span>
