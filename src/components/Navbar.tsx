@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useTheme } from '../context/ThemeContext'
 import styles from './styles/Navbar.module.css'
 
@@ -9,26 +9,32 @@ interface NavbarProps {
 
 export default function Navbar({ onContactOpen }: NavbarProps) {
   const { pathname } = useLocation()
-  const navigate = useNavigate()
   const { theme, toggle } = useTheme()
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   // Close menu on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      if (
+        menuOpen &&
+        menuRef.current && !menuRef.current.contains(target) &&
+        (!dropdownRef.current || !dropdownRef.current.contains(target))
+      ) {
         setMenuOpen(false)
       }
     }
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
-  }, [])
+  }, [menuOpen])
 
   // Close menu on route change
   useEffect(() => { setMenuOpen(false) }, [pathname])
 
   return (
+    <>
     <header className={styles.navbar}>
       <div className={styles.navbar__inner}>
         {/* Brand */}
@@ -86,30 +92,28 @@ export default function Navbar({ onContactOpen }: NavbarProps) {
             >
               <span /><span /><span />
             </button>
-
-            {menuOpen && (
-              <>
-                <div className={styles.menuBackdrop} onClick={() => setMenuOpen(false)} />
-                <div className={styles.dropdown}>
-                  <Link to="/" className={`${styles.dropItem} ${pathname === '/' ? styles['dropItem--active'] : ''}`}>
-                    Gallery
-                  </Link>
-                  <Link to="/collections" className={`${styles.dropItem} ${pathname.startsWith('/collections') ? styles['dropItem--active'] : ''}`}>
-                    Collections
-                  </Link>
-                  <button onClick={() => { onContactOpen(); setMenuOpen(false) }} className={styles.dropItem}>
-                    Contact
-                  </button>
-                  <div className={styles.dropDivider} />
-                  {/* <Link to="/admin" className={styles.dropItem}>
-                  Admin
-                </Link> */}
-                </div>
-              </>
-            )}
           </div>
         </div>
       </div>
     </header>
+
+    {menuOpen && (
+      <>
+        <div className={styles.menuBackdrop} onClick={() => setMenuOpen(false)} />
+        <div ref={dropdownRef} className={styles.dropdown}>
+          <Link to="/" onClick={() => setMenuOpen(false)} className={`${styles.dropItem} ${pathname === '/' ? styles['dropItem--active'] : ''}`}>
+            Gallery
+          </Link>
+          <Link to="/collections" onClick={() => setMenuOpen(false)} className={`${styles.dropItem} ${pathname.startsWith('/collections') ? styles['dropItem--active'] : ''}`}>
+            Collections
+          </Link>
+          <button onClick={() => { onContactOpen(); setMenuOpen(false) }} className={styles.dropItem}>
+            Contact
+          </button>
+          <div className={styles.dropDivider} />
+        </div>
+      </>
+    )}
+    </>
   )
 }
