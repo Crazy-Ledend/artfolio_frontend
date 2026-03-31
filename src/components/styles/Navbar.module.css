@@ -175,9 +175,7 @@
   position: fixed;
   inset: 0;
   z-index: 311; /* just below dropdown's 312 */
-  background: rgba(0, 0, 0, 0.18);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.1);
   animation: fadeIn 0.2s ease both;
 }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
