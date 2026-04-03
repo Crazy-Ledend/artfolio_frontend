@@ -15,6 +15,8 @@ export interface Artwork {
   created_at: string
   updated_at: string
   fusions: string[]   // lowercase pokemon names
+  like_count: number
+  liked_by_me: boolean
 }
 
 export interface Collection {
@@ -173,3 +175,25 @@ export type DecorImageProps = {
   left?: string;
   right?: string;
 };
+
+export interface DiscordUser {
+  id: string
+  username: string
+  avatar?: string
+  discriminator: string
+}
+
+export interface FusionArtwork {
+  id: string
+  title: string
+  description?: string
+  medium?: string
+  year?: number
+  tags: string[]
+  fusions: string[]
+  image_url: string
+  full_url: string
+  // ↓ new
+  like_count: number
+  liked_by_me: boolean
+}

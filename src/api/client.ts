@@ -8,6 +8,14 @@ import type {
 
 const api = axios.create({ baseURL: '/api', timeout: 10000 })
 
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('artfolio-token')
+  if (token && config.headers) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+})
+
 // ── Artworks ──────────────────────────────────────────────
 
 export const getArtworks = (params: ArtworkFilters = {}): Promise<ArtworkListResponse> =>
@@ -77,4 +85,9 @@ export const getFusionRequests = (secret: string): Promise<FusionRequest[]> =>
   api.get('/fusion-requests', { headers: { 'x-admin-secret': secret } }).then(r => r.data)
 
 export const deleteFusionRequest = (id: string, secret: string): Promise<void> =>
-  api.delete(`/fusion-requests/${id}`, { headers: { 'x-admin-secret': secret }, }).then(() => {});
+  api.delete(`/fusion-requests/${id}`, { headers: { 'x-admin-secret': secret }, }).then(() => { });
+
+export async function toggleLike(artworkId: string): Promise<{ liked: boolean; like_count: number }> {
+  const res = await api.post(`/artworks/${artworkId}/like`, {})
+  return res.data
+}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { submitContact } from '../api/client'
 import type { Artwork, ContactMessage } from '../types'
 import styles from './styles/ContactModal.module.css'
@@ -22,15 +22,18 @@ export default function ContactModal({ prefillArtwork, onClose }: ContactModalPr
   })
   const [status, setStatus] = useState<Status>('idle')
 
+  const closeRef = useRef(onClose)
+  closeRef.current = onClose
+
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') closeRef.current() }
     window.addEventListener('keydown', handler)
     document.body.style.overflow = 'hidden'
     return () => {
       window.removeEventListener('keydown', handler)
       document.body.style.overflow = ''
     }
-  }, [onClose])
+  }, [])
 
   const set = (key: keyof ContactMessage) => (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>

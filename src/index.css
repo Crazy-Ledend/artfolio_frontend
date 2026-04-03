@@ -21,6 +21,7 @@
   --ink-300: #c0a888;
   --ink-200: #ddd0c0;
   --ink-100: #f0e8dc;
+  --warn: #f75f5f;
   --accent: #d4714a;
   --canvas: #fde8d8;
   --tile-dim: 0.2;
@@ -65,7 +66,9 @@
 }
 
 @layer base {
-  html, body {
+
+  html,
+  body {
     font-family: 'Nunito', sans-serif;
     -webkit-font-smoothing: antialiased;
     background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-mid) 40%, var(--bg-end) 100%);
@@ -162,9 +165,20 @@
 }
 
 @keyframes pulseBadge {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 var(--accent); }
-  70% { transform: scale(1); box-shadow: 0 0 0 6px transparent; }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 transparent; }
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 var(--accent);
+  }
+
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px transparent;
+  }
+
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 transparent;
+  }
 }
 
 .dev-badge-text-hover {
@@ -184,7 +198,7 @@
     position: relative;
     right: auto;
     bottom: auto;
-    margin: 10px 20px 30px auto; 
+    margin: 10px 20px 30px auto;
     width: max-content;
     z-index: 10;
   }
