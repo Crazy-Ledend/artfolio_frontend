@@ -6,7 +6,10 @@ import type {
   ArtistProfile, ProfileFormData,
 } from '../types'
 
-const api = axios.create({ baseURL: '/api', timeout: 10000 })
+const api = axios.create({ 
+  baseURL: import.meta.env.PROD ? 'https://artfolio-api.onrender.com' : '/api', 
+  timeout: 10000 
+})
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('artfolio-token')

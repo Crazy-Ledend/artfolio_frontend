@@ -375,7 +375,7 @@ export default function FusionDetail() {
           if (current?.liked === art.liked_by_me && current?.count === art.like_count) return s
           return { ...s, [active.id]: { liked: art.liked_by_me, count: art.like_count } }
         })
-      }).catch(() => {})
+      }).catch(() => { })
     })
     return () => { cancelled = true }
   }, [active?.id, user])
@@ -551,7 +551,7 @@ export default function FusionDetail() {
     )
   }
 
-  const activeLike = getLikeState(active!)
+  const activeLike = getLikeState(active)
 
   return (
     <div className={styles.page}>

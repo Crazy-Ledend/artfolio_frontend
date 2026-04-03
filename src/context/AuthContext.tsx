@@ -50,7 +50,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [fetchMe])
 
   const login = () => {
-    window.location.href = '/api/auth/discord'
+    window.location.href = import.meta.env.PROD 
+      ? 'https://artfolio-api.onrender.com/auth/discord'
+      : '/api/auth/discord'
   }
 
   const logout = () => {
