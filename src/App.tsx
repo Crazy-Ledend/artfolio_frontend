@@ -16,11 +16,13 @@ function DevBadge() {
   if (pathname.startsWith('/profile') || pathname.startsWith('/admin')) return null
 
   return (
-    <a href="https://hazeltech-dev.vercel.app/" target="_blank" rel="noopener noreferrer" className="dev-badge">
-      <div className="dev-badge-dot"></div>
-      <span className="dev-badge-text">&lt;/crazypokeking&gt; — dev</span>
-      <span className="dev-badge-text-hover">hazeltech 🦕</span>
-    </a>
+    <div className="mobile-badge-bg">
+      <a href="https://hazeltech-dev.vercel.app/" target="_blank" rel="noopener noreferrer" className="dev-badge">
+        <div className="dev-badge-dot"></div>
+        <span className="dev-badge-text">&lt;/crazypokeking&gt; — dev</span>
+        <span className="dev-badge-text-hover">hazeltech 🦕</span>
+      </a>
+    </div>
   )
 }
 
@@ -40,14 +42,14 @@ function AuthCallback() {
 
   return (
     <div className="flex items-center justify-center min-h-screen">
-       <div className="text-lg font-medium">Logging you in...</div>
+      <div className="text-lg font-medium">Logging you in...</div>
     </div>
   )
 }
 
 function AppContent() {
   const [contactOpen, setContactOpen] = useState(false)
-  
+
   const handleOpenContact = useCallback(() => setContactOpen(true), [])
   const handleCloseContact = useCallback(() => setContactOpen(false), [])
 

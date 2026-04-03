@@ -551,7 +551,7 @@ export default function FusionDetail() {
     )
   }
 
-  const activeLike = getLikeState(active)
+  const activeLike = getLikeState(active!)
 
   return (
     <div className={styles.page}>

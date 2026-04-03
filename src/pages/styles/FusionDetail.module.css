@@ -1,6 +1,6 @@
 .page {
   min-height: 100vh;
-  background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-mid) 40%, var(--bg-end) 100%);
+  /* background removed to allow body fixed gradient through */
   padding-top: 54px;
   transition: background 0.3s;
 }

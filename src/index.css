@@ -8,7 +8,7 @@
 :root {
   --bg-start: #fde8d8;
   --bg-mid: #fad4b4;
-  --bg-end: #f7b88a;
+  --bg-end: #f1b88e;
   --glass-bg: rgba(255, 255, 255, 0.22);
   --glass-border: rgba(255, 255, 255, 0.5);
   --glass-input: rgba(255, 255, 255, 0.3);
@@ -201,5 +201,12 @@
     margin: 10px 20px 30px auto;
     width: max-content;
     z-index: 10;
+  }
+
+  .mobile-badge-bg {
+    background: transparent;
+    /* using flex ensures child margins extend the space properly */
+    display: flex;
+    justify-content: flex-end;
   }
 }
