@@ -9,8 +9,8 @@ export default function Collections() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    getCollections()
-      .then(c => setCollections(Array.isArray(c) ? c : []))
+    getCollections({ limit: 100 })
+      .then(c => setCollections(Array.isArray(c?.items) ? c.items : []))
       .catch(() => { })
       .finally(() => setLoading(false))
   }, [])

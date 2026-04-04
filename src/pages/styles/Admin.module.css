@@ -1,10 +1,11 @@
   /* background removed to allow body fixed gradient through */
-.inner { max-width: 1280px; margin: 0 auto; padding: 0 24px 28px; }
+.inner { max-width: 1280px; margin: 0 auto; padding: 100px 24px 28px; }
 .topRow { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
 .heading { font-family: 'Fredoka', sans-serif; font-size: 36px; font-weight: 600; color: var(--ink-800); }
 .signout { font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 600; color: var(--ink-300); background: none; border: none; cursor: pointer; transition: color 0.15s; }
 .signout:hover { color: var(--ink-600); }
-.tabs { display: flex; gap: 4px; margin-bottom: 24px; border-bottom: 2px solid var(--glass-border); }
+.tabs { display: flex; gap: 4px; margin-bottom: 24px; border-bottom: 2px solid var(--glass-border); overflow-x: auto; white-space: nowrap; -ms-overflow-style: none; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
 .tab { padding: 8px 18px; font-family: 'Fredoka', sans-serif; font-size: 16px; font-weight: 500; text-transform: capitalize; background: none; border: none; border-bottom: 3px solid transparent; margin-bottom: -2px; cursor: pointer; color: var(--ink-300); transition: color 0.15s, border-color 0.15s; }
 .tab:hover { color: var(--ink-600); }
 .tab--active { color: var(--ink-800); border-bottom-color: var(--ink-700); }
@@ -48,7 +49,14 @@
 .btnSecondary:hover { background: var(--glass-input); }
 .btnAdd { padding: 8px 16px; background: var(--ink-700); color: var(--canvas); font-family: 'Fredoka', sans-serif; font-size: 14px; font-weight: 500; border: none; border-radius: 10px; cursor: pointer; transition: background 0.15s, transform 0.15s; }
 .btnAdd:hover { background: var(--ink-800); transform: translateY(-1px); }
-.countsRow { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.countsRow { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 10px; flex-wrap: wrap; }
+.searchForm { display: flex; gap: 8px; flex: 1; max-width: 320px; margin-left: auto; }
+.mobileText { display: none; }
+@media (max-width: 640px) {
+  .searchForm { max-width: 100%; order: 3; flex-basis: 100%; margin-left: 0; }
+  .desktopText { display: none; }
+  .mobileText { display: inline; }
+}
 .countLabel { font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 600; color: var(--ink-400); }
 .listRow { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: var(--glass-bg); border: 2px solid var(--glass-border); border-radius: 12px; transition: background 0.15s; }
 .listRow:hover { background: var(--glass-input); }
@@ -72,6 +80,7 @@
 .messageText { font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 500; color: var(--ink-600); line-height: 1.6; margin-top: 8px; }
 .messageEmpty { font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 600; color: var(--ink-300); }
   /* background removed to allow body fixed gradient through */
+.loginWrap { display: flex; justify-content: center; align-items: center; min-height: 80vh; padding: 24px; }
 .loginCard { background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 2px solid var(--glass-border); border-radius: 24px; padding: 30px; width: 100%; max-width: 340px; box-shadow: 0 6px 28px var(--shadow); }
 .loginTitle { font-family: 'Fredoka', sans-serif; font-size: 28px; font-weight: 500; color: var(--ink-800); margin-bottom: 18px; }
 .skeleton { height: 46px; border-radius: 12px; background: var(--glass-bg); animation: shimmer 1.3s ease-in-out infinite; }

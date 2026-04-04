@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import {
   getArtworks, createArtwork, updateArtwork, deleteArtwork,
   getCollections, createCollection, deleteCollection, getContacts,
+  deleteContact,
 } from '../api/client'
 import type { Artwork, Collection, ContactRecord, ArtworkFormData, CollectionFormData } from '../types'
 import PokemonPicker from '../components/PokemonPicker'
@@ -164,18 +165,31 @@ function ArtworksTab({ secret }: { secret: string }) {
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState('')
 
-  const load = () => {
+  const [page, setPage] = useState(1)
+  const [searchInput, setSearchInput] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalItems, setTotalItems] = useState(0)
+
+  useEffect(() => {
+    getCollections({ limit: 100 })
+      .then(r => setCollections(Array.isArray(r?.items) ? r.items : []))
+      .catch(() => {})
+  }, [])
+
+  const loadArtworks = () => {
     setLoading(true); setError(null)
-    Promise.all([getArtworks({ limit: 100 }), getCollections()])
-      .then(([art, col]) => {
+    getArtworks({ limit: 15, page, search: searchQuery })
+      .then(art => {
         setArtworks(Array.isArray(art?.items) ? art.items : [])
-        setCollections(Array.isArray(col) ? col : [])
+        setTotalPages(art?.pages || 1)
+        setTotalItems(art?.total || 0)
       })
       .catch(() => setError('Could not load. Is the backend running?'))
       .finally(() => setLoading(false))
   }
 
-  useEffect(() => { load() }, [])
+  useEffect(() => { loadArtworks() }, [page, searchQuery])
 
   const openNew = () => { setForm(emptyArtwork()); setEditTarget(null); setShowForm(true); setSaveError('') }
   const openEdit = (a: Artwork) => {
@@ -212,7 +226,7 @@ function ArtworksTab({ secret }: { secret: string }) {
       } as unknown as Partial<ArtworkFormData>
       if (editTarget) await updateArtwork(editTarget, payload, secret)
       else await createArtwork(payload, secret)
-      setShowForm(false); load()
+      setShowForm(false); loadArtworks()
     } catch (e: unknown) {
       const msg = (e as { response?: { data?: { detail?: string } } })?.response?.data?.detail
       setSaveError(msg ?? 'Error saving artwork')
@@ -221,7 +235,7 @@ function ArtworksTab({ secret }: { secret: string }) {
 
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this artwork?')) return
-    await deleteArtwork(id, secret); load()
+    await deleteArtwork(id, secret); loadArtworks()
   }
 
   if (error) return <div className={styles.errorBanner}>{error}</div>
@@ -229,8 +243,21 @@ function ArtworksTab({ secret }: { secret: string }) {
   return (
     <div>
       <div className={styles.countsRow}>
-        <span className={styles.countLabel}>{artworks.length} artworks</span>
-        <button onClick={openNew} className={styles.btnAdd}>+ Add artwork</button>
+        <span className={styles.countLabel}>{totalItems} artworks</span>
+        <form onSubmit={(e) => { e.preventDefault(); setPage(1); setSearchQuery(searchInput) }} className={styles.searchForm}>
+           <input 
+             value={searchInput} 
+             onChange={e => setSearchInput(e.target.value)} 
+             className={styles.input}
+             placeholder="Search by fusions, title…"
+             style={{ margin: 0, padding: '6px 12px' }}
+           />
+           <button type="submit" className={styles.btnSecondary} style={{ padding: '6px 12px', flexShrink: 0 }}>Search</button>
+        </form>
+        <button onClick={openNew} className={styles.btnAdd}>
+          <span className={styles.desktopText}>+ Add artwork</span>
+          <span className={styles.mobileText}>+ Add</span>
+        </button>
       </div>
 
       {showForm && (
@@ -308,6 +335,25 @@ function ArtworksTab({ secret }: { secret: string }) {
               </div>
             </div>
           ))}
+          {totalPages > 1 && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16 }}>
+              <button 
+                 disabled={page <= 1} 
+                 onClick={() => setPage(p => p - 1)} 
+                 className={styles.btnSecondary}
+              >
+                 Previous
+              </button>
+              <span style={{ fontFamily: 'Nunito', fontSize: 13, color: 'var(--ink-500)', fontWeight: 600 }}>Page {page} of {totalPages}</span>
+              <button 
+                 disabled={page >= totalPages} 
+                 onClick={() => setPage(p => p + 1)} 
+                 className={styles.btnSecondary}
+              >
+                 Next
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -318,9 +364,27 @@ function CollectionsTab({ secret }: { secret: string }) {
   const [collections, setCollections] = useState<Collection[]>([])
   const [form, setForm] = useState<CollectionFormData>({ name: '', slug: '', description: '', cover_gdrive_file_id: '', sort_order: 0 })
   const [saving, setSaving] = useState(false)
+  const [loading, setLoading] = useState(true)
 
-  const load = () => getCollections().then(c => setCollections(Array.isArray(c) ? c : [])).catch(() => { })
-  useEffect(() => { load() }, [])
+  const [page, setPage] = useState(1)
+  const [searchInput, setSearchInput] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalItems, setTotalItems] = useState(0)
+
+  const load = () => {
+    setLoading(true)
+    getCollections({ limit: 15, page, search: searchQuery })
+      .then(r => {
+        setCollections(Array.isArray(r?.items) ? r.items : [])
+        setTotalPages(r?.pages || 1)
+        setTotalItems(r?.total || 0)
+      })
+      .catch(() => { })
+      .finally(() => setLoading(false))
+  }
+  
+  useEffect(() => { load() }, [page, searchQuery])
 
   const handleCreate = async () => {
     setSaving(true)
@@ -338,7 +402,22 @@ function CollectionsTab({ secret }: { secret: string }) {
     setForm(f => ({ ...f, [key]: val }))
 
   return (
-    <div style={{ maxWidth: 560 }}>
+    <div style={{ maxWidth: 600 }}>
+      {/* List counts and search *above* create form */}
+      <div className={styles.countsRow}>
+        <span className={styles.countLabel}>{totalItems} collections</span>
+        <form onSubmit={(e) => { e.preventDefault(); setPage(1); setSearchQuery(searchInput) }} className={styles.searchForm}>
+           <input 
+             value={searchInput} 
+             onChange={e => setSearchInput(e.target.value)} 
+             className={styles.input}
+             placeholder="Search collections…"
+             style={{ margin: 0, padding: '6px 12px' }}
+           />
+           <button type="submit" className={styles.btnSecondary} style={{ padding: '6px 12px', flexShrink: 0 }}>Search</button>
+        </form>
+      </div>
+
       <div className={styles.card}>
         <h3 style={{ fontFamily: "'Fredoka',sans-serif", fontSize: 20, color: 'var(--ink-800)', marginBottom: 16 }}>New collection</h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -351,7 +430,6 @@ function CollectionsTab({ secret }: { secret: string }) {
               value={form.cover_gdrive_file_id}
               onChange={e => {
                 const val = e.target.value
-                // Extract file ID from GDrive URL if pasted
                 const match = val.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]{20,})/)
                 setF('cover_gdrive_file_id', match ? match[1] : val)
               }}
@@ -365,7 +443,9 @@ function CollectionsTab({ secret }: { secret: string }) {
         </div>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-        {collections.map(c => (
+        {loading ? (
+          <div className={styles.skeleton} style={{ height: 60 }} />
+        ) : collections.map(c => (
           <div key={c.id} className={styles.listRow}>
             <div className={styles.listInfo}>
               <p className={styles.listTitle}>{c.name}</p>
@@ -374,6 +454,13 @@ function CollectionsTab({ secret }: { secret: string }) {
             <button onClick={() => handleDelete(c.id)} className={styles.linkBtnDanger}>Delete</button>
           </div>
         ))}
+        {totalPages > 1 && !loading && (
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16 }}>
+            <button disabled={page <= 1} onClick={() => setPage(p => p - 1)} className={styles.btnSecondary}>Previous</button>
+            <span style={{ fontFamily: 'Nunito', fontSize: 13, color: 'var(--ink-500)', fontWeight: 600 }}>Page {page} of {totalPages}</span>
+            <button disabled={page >= totalPages} onClick={() => setPage(p => p + 1)} className={styles.btnSecondary}>Next</button>
+          </div>
+        )}
       </div>
     </div>
   )
@@ -383,9 +470,17 @@ function MessagesTab({ secret }: { secret: string }) {
   const [contacts, setContacts] = useState<ContactRecord[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
+  const load = () => {
     getContacts(secret).then(c => setContacts(Array.isArray(c) ? c : [])).catch(() => { }).finally(() => setLoading(false))
-  }, [secret])
+  }
+
+  useEffect(() => { load() }, [secret])
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Delete this message?')) return
+    await deleteContact(id, secret)
+    load()
+  }
 
   if (loading) return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -404,7 +499,10 @@ function MessagesTab({ secret }: { secret: string }) {
               <p className={styles.messageSender}>{c.name} <span className={styles.messageSenderMuted}>— {c.email}</span></p>
               {c.subject && <p className={styles.messageSubject}>{c.subject}</p>}
             </div>
-            <p className={styles.messageDate}>{new Date(c.created_at).toLocaleDateString()}</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <p className={styles.messageDate}>{new Date(c.created_at).toLocaleDateString()}</p>
+              <button onClick={() => handleDelete(c.id)} className={styles.linkBtnDanger} style={{ fontSize: 11, padding: 0 }}>Delete</button>
+            </div>
           </div>
           <p className={styles.messageText}>{c.message}</p>
         </div>
@@ -517,6 +615,10 @@ function RequestsTab({ secret }: { secret: string }) {
   const [loading, setLoading] = useState(true)
   const [pokeIds, setPokeIds] = useState<Record<string, number>>({})
 
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalItems, setTotalItems] = useState(0)
+
   useEffect(() => {
     // Load poke IDs for sprites
     fetch('https://pokeapi.co/api/v2/pokemon?limit=1300')
@@ -532,12 +634,17 @@ function RequestsTab({ secret }: { secret: string }) {
   }, [])
 
   const load = () => {
-    getFusionRequests(secret)
-      .then(r => setRequests(Array.isArray(r) ? r : []))
+    setLoading(true)
+    getFusionRequests(secret, { page, limit: 20 })
+      .then(r => {
+        setRequests(Array.isArray(r?.items) ? r.items : [])
+        setTotalPages(r?.pages || 1)
+        setTotalItems(r?.total || 0)
+      })
       .catch(() => { })
       .finally(() => setLoading(false))
   }
-  useEffect(() => { load() }, [secret])
+  useEffect(() => { load() }, [secret, page])
 
   const handleDelete = async (id: string) => {
     if (!confirm('Remove this request?')) return
@@ -551,44 +658,50 @@ function RequestsTab({ secret }: { secret: string }) {
     return `${SPRITE_BASE}/other/home/${id}.png`
   }
 
-  if (loading) return <div style={{ padding: 24, color: 'var(--ink-400)', fontFamily: 'Nunito' }}>Loading…</div>
-
   return (
     <div>
       <div className={styles.countsRow}>
-        <span className={styles.countLabel}>{requests.length} fusion requests</span>
-        <button onClick={load} className={styles.btnSecondary}>Refresh</button>
+        <span className={styles.countLabel}>{totalItems} fusion requests</span>
+        <button onClick={load} className={styles.btnSecondary} disabled={loading}>Refresh</button>
       </div>
 
-      {requests.length === 0 ? (
+      {loading ? (
+        <div style={{ padding: 24, color: 'var(--ink-400)', fontFamily: 'Nunito' }}>Loading…</div>
+      ) : requests.length === 0 ? (
         <p style={{ fontFamily: 'Nunito,sans-serif', fontSize: 14, color: 'var(--ink-400)', padding: '20px 0' }}>
           No fusion requests yet.
         </p>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 10 }}>
-          {requests.map(req => (
-            <div key={req.id} className={styles.card} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, padding: '16px 12px' }}>
-              {/* Sprites */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <img src={sprite(req.poke1)} alt={req.poke1} style={{ width: 56, height: 56, objectFit: 'contain' }} />
-                <span style={{ fontFamily: 'Fredoka,sans-serif', fontSize: 20, color: 'var(--ink-400)' }}>+</span>
-                <img src={sprite(req.poke2)} alt={req.poke2} style={{ width: 56, height: 56, objectFit: 'contain' }} />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 10 }}>
+            {requests.map(req => (
+              <div key={req.id} className={styles.card} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, padding: '16px 12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <img src={sprite(req.poke1)} alt={req.poke1} style={{ width: 56, height: 56, objectFit: 'contain' }} />
+                  <span style={{ fontFamily: 'Fredoka,sans-serif', fontSize: 20, color: 'var(--ink-400)' }}>+</span>
+                  <img src={sprite(req.poke2)} alt={req.poke2} style={{ width: 56, height: 56, objectFit: 'contain' }} />
+                </div>
+                <p style={{ fontFamily: 'Fredoka,sans-serif', fontSize: 15, fontWeight: 600, color: 'var(--ink-800)', textAlign: 'center', lineHeight: 1.2 }}>
+                  {req.poke1.charAt(0).toUpperCase() + req.poke1.slice(1)}<br />
+                  <span style={{ color: 'var(--ink-400)', fontSize: 13 }}>+</span><br />
+                  {req.poke2.charAt(0).toUpperCase() + req.poke2.slice(1)}
+                </p>
+                <span style={{ fontFamily: 'Silkscreen,monospace', fontSize: 10, color: 'var(--accent)', letterSpacing: '0.08em' }}>
+                  {req.votes} {req.votes === 1 ? 'request' : 'requests'}
+                </span>
+                <button onClick={() => handleDelete(req.id)} className={styles.linkBtnDanger} style={{ fontSize: 12 }}>
+                  Dismiss
+                </button>
               </div>
-              {/* Names */}
-              <p style={{ fontFamily: 'Fredoka,sans-serif', fontSize: 15, fontWeight: 600, color: 'var(--ink-800)', textAlign: 'center', lineHeight: 1.2 }}>
-                {req.poke1.charAt(0).toUpperCase() + req.poke1.slice(1)}<br />
-                <span style={{ color: 'var(--ink-400)', fontSize: 13 }}>+</span><br />
-                {req.poke2.charAt(0).toUpperCase() + req.poke2.slice(1)}
-              </p>
-              {/* Votes */}
-              <span style={{ fontFamily: 'Silkscreen,monospace', fontSize: 10, color: 'var(--accent)', letterSpacing: '0.08em' }}>
-                {req.votes} {req.votes === 1 ? 'request' : 'requests'}
-              </span>
-              <button onClick={() => handleDelete(req.id)} className={styles.linkBtnDanger} style={{ fontSize: 12 }}>
-                Dismiss
-              </button>
+            ))}
+          </div>
+          {totalPages > 1 && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <button disabled={page <= 1} onClick={() => setPage(p => p - 1)} className={styles.btnSecondary}>Previous</button>
+              <span style={{ fontFamily: 'Nunito', fontSize: 13, color: 'var(--ink-500)', fontWeight: 600 }}>Page {page} of {totalPages}</span>
+              <button disabled={page >= totalPages} onClick={() => setPage(p => p + 1)} className={styles.btnSecondary}>Next</button>
             </div>
-          ))}
+          )}
         </div>
       )}
     </div>

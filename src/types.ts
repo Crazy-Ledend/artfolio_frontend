@@ -45,6 +45,22 @@ export interface ArtworkListResponse {
   pages: number
 }
 
+export interface CollectionListResponse {
+  items: Collection[]
+  total: number
+  page: number
+  limit: number
+  pages: number
+}
+
+export interface RequestListResponse {
+  items: FusionRequest[]
+  total: number
+  page: number
+  limit: number
+  pages: number
+}
+
 export interface ContactMessage {
   name: string
   email: string

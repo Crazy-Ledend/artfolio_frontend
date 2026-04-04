@@ -1,8 +1,8 @@
 import axios from 'axios'
 import type {
   Artwork, ArtworkListResponse, ArtworkMeta, ArtworkFilters,
-  ArtworkFormData, Collection, CollectionFormData,
-  ContactMessage, ContactRecord, FusionMap,
+  ArtworkFormData, Collection, CollectionFormData, CollectionListResponse,
+  ContactMessage, ContactRecord, FusionMap, RequestListResponse,
   ArtistProfile, ProfileFormData,
 } from '../types'
 
@@ -44,8 +44,8 @@ export const deleteArtwork = (id: string, secret: string): Promise<void> =>
 export const getCollection = (id: string): Promise<Collection> =>
   api.get(`/collections/${id}`).then(r => r.data)
 
-export const getCollections = (): Promise<Collection[]> =>
-  api.get('/collections').then(r => r.data)
+export const getCollections = (params: { search?: string, limit?: number, page?: number } = {}): Promise<CollectionListResponse> =>
+  api.get('/collections', { params }).then(r => r.data)
 
 export const createCollection = (data: CollectionFormData, secret: string): Promise<Collection> =>
   api.post('/collections', data, { headers: { 'x-admin-secret': secret } }).then(r => r.data)
@@ -63,6 +63,9 @@ export const submitContact = (data: ContactMessage): Promise<{ id: string; messa
 
 export const getContacts = (secret: string): Promise<ContactRecord[]> =>
   api.get('/contact', { headers: { 'x-admin-secret': secret } }).then(r => r.data)
+
+export const deleteContact = (id: string, secret: string): Promise<void> =>
+  api.delete(`/contact/${id}`, { headers: { 'x-admin-secret': secret } })
 
 // ── Pokémon fusions ───────────────────────────────────────
 
@@ -84,8 +87,8 @@ import type { FusionRequest } from '../types'
 export const requestFusion = (poke1: string, poke2: string): Promise<{ id: string; votes: number }> =>
   api.post('/fusion-requests', { poke1, poke2 }).then(r => r.data)
 
-export const getFusionRequests = (secret: string): Promise<FusionRequest[]> =>
-  api.get('/fusion-requests', { headers: { 'x-admin-secret': secret } }).then(r => r.data)
+export const getFusionRequests = (secret: string, params: { page?: number, limit?: number } = {}): Promise<RequestListResponse> =>
+  api.get('/fusion-requests', { params, headers: { 'x-admin-secret': secret } }).then(r => r.data)
 
 export const deleteFusionRequest = (id: string, secret: string): Promise<void> =>
   api.delete(`/fusion-requests/${id}`, { headers: { 'x-admin-secret': secret }, }).then(() => { });
