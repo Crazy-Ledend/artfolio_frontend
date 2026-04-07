@@ -6,7 +6,7 @@ import {
 } from '../api/client'
 import type { Artwork, Collection, ContactRecord, ArtworkFormData, CollectionFormData } from '../types'
 import PokemonPicker from '../components/PokemonPicker'
-import { getProfile, updateProfile, getFusionRequests, deleteFusionRequest } from '../api/client'
+import { getProfile, updateProfile, getFusionRequests, deleteFusionRequest, completeFusionRequest } from '../api/client'
 import type { ArtistProfile, SocialLink, FusionRequest } from '../types'
 import styles from './styles/Admin.module.css'
 
@@ -652,6 +652,11 @@ function RequestsTab({ secret }: { secret: string }) {
     load()
   }
 
+  const handleComplete = async (id: string) => {
+    await completeFusionRequest(id, secret)
+    load()
+  }
+
   const sprite = (name: string) => {
     const id = pokeIds[name]
     if (!id) return `${SPRITE_BASE}/${name}.png`
@@ -689,9 +694,26 @@ function RequestsTab({ secret }: { secret: string }) {
                 <span style={{ fontFamily: 'Silkscreen,monospace', fontSize: 10, color: 'var(--accent)', letterSpacing: '0.08em' }}>
                   {req.votes} {req.votes === 1 ? 'request' : 'requests'}
                 </span>
-                <button onClick={() => handleDelete(req.id)} className={styles.linkBtnDanger} style={{ fontSize: 12 }}>
-                  Dismiss
-                </button>
+                
+                <div style={{ display: 'flex', gap: 12, marginTop: 4 }}>
+                  {req.completed ? (
+                    <>
+                      <span style={{ fontFamily: 'Nunito', fontSize: 12, color: '#27ae60', fontWeight: 700 }}>✓ Completed</span>
+                      <button onClick={() => handleDelete(req.id)} className={styles.linkBtnDanger} style={{ fontSize: 12 }}>
+                        Remove
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button onClick={() => handleDelete(req.id)} className={styles.linkBtnDanger} style={{ fontSize: 12 }}>
+                        Dismiss
+                      </button>
+                      <button onClick={() => handleComplete(req.id)} className={styles.linkBtn} style={{ fontSize: 12, color: '#27ae60' }}>
+                        Mark Done
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             ))}
           </div>

@@ -399,6 +399,25 @@ export default function FusionDetail() {
 
   const loading = pokeLoading || fusionLoading
 
+  useEffect(() => {
+    if (!poke1 || !poke2) return
+    const key = `fusion_req_${poke1}+${poke2}`
+    if (localStorage.getItem(key)) {
+      setRequested(true)
+      // verify it's still alive in the db
+      import('../api/client').then(({ getFusionRequestStatus }) => {
+        getFusionRequestStatus(poke1, poke2).then(exists => {
+          if (!exists) {
+            localStorage.removeItem(key)
+            setRequested(false)
+          }
+        }).catch(() => {})
+      })
+    } else {
+      setRequested(false)
+    }
+  }, [poke1, poke2])
+
   const handleDoubleTap = useDoubleTap(() => {
     if (!active || !user) return
 
@@ -479,14 +498,13 @@ export default function FusionDetail() {
     try {
       await requestFusion(poke1, poke2)
       setRequested(true)
-      localStorage.setItem(`fusion_req_${[poke1, poke2].sort().join('+')}`, '1')
+      localStorage.setItem(`fusion_req_${poke1}+${poke2}`, '1')
     } catch { }
     finally { setRequesting(false) }
   }
 
   if (!artworks.length || !poke1Data || !poke2Data) {
-    const alreadyRequested = requested ||
-      !!localStorage.getItem(`fusion_req_${[poke1, poke2].sort().join('+')}`)
+    const alreadyRequested = requested
     return (
       <div className={styles.page}>
         <div className={styles.noFusionWrap}>

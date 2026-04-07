@@ -93,6 +93,12 @@ export const getFusionRequests = (secret: string, params: { page?: number, limit
 export const deleteFusionRequest = (id: string, secret: string): Promise<void> =>
   api.delete(`/fusion-requests/${id}`, { headers: { 'x-admin-secret': secret }, }).then(() => { });
 
+export const completeFusionRequest = (id: string, secret: string): Promise<void> =>
+  api.patch(`/fusion-requests/${id}/complete`, {}, { headers: { 'x-admin-secret': secret } }).then(() => { });
+
+export const getFusionRequestStatus = (poke1: string, poke2: string): Promise<boolean> =>
+  api.get(`/fusion-requests/check/${poke1}/${poke2}`).then(r => r.data.exists)
+
 export async function toggleLike(artworkId: string): Promise<{ liked: boolean; like_count: number }> {
   const res = await api.post(`/artworks/${artworkId}/like`, {})
   return res.data

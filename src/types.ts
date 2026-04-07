@@ -169,6 +169,7 @@ export interface FusionRequest {
   poke2: string
   votes: number
   created_at: string
+  completed?: boolean
 }
 
 // Spirals
