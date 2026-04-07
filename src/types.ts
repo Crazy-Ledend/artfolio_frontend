@@ -170,6 +170,7 @@ export interface FusionRequest {
   votes: number
   created_at: string
   completed?: boolean
+  requesters?: { id: string; username: string; avatar: string | null }[]
 }
 
 // Spirals

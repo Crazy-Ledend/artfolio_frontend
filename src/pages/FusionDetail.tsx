@@ -325,7 +325,7 @@ function useDoubleTap(onDoubleTap: () => void, delay = 300) {
 export default function FusionDetail() {
   const { poke1, poke2 } = useParams<{ poke1: string; poke2: string }>()
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const { user, login } = useAuth()
 
   const { pokemon: allPokemon, loading: pokeLoading } = usePokemonList()
   const [fusionMap, setFusionMap] = useState<FusionMap>({})
@@ -494,6 +494,10 @@ export default function FusionDetail() {
 
   const handleRequest = async () => {
     if (requested || requesting || !poke1 || !poke2) return
+    if (!user) {
+      login()
+      return
+    }
     setRequesting(true)
     try {
       await requestFusion(poke1, poke2)
@@ -561,7 +565,7 @@ export default function FusionDetail() {
             {alreadyRequested ? (
               <><img src="/assets/Pocket_Request_Selected.png" alt="" className={styles.requestBtnIcon} />Fusion Requested!</>
             ) : (
-              <><img src="/assets/Pocket_Request_Unselected.png" alt="" className={styles.requestBtnIcon} />{requesting ? "Requesting…" : "Request this Fusion"}</>
+              <><img src="/assets/Pocket_Request_Unselected.png" alt="" className={styles.requestBtnIcon} />{requesting ? "Requesting…" : (!user ? "Login to Request" : "Request this Fusion")}</>
             )}
           </button>
         </div>

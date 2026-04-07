@@ -8,6 +8,7 @@ import Profile from './pages/Profile'
 import PokemonDetail from './pages/PokemonDetail'
 import FusionDetail from './pages/FusionDetail'
 import CollectionDetail from './pages/CollectionDetail'
+import PrivacyPolicy from './pages/PrivacyPolicy'
 import ContactModal from './components/ContactModal'
 import { AuthProvider, useAuth } from './context/AuthContext'
 
@@ -71,9 +72,19 @@ function AppContent() {
           <Route path="/fusion/:poke1/:poke2" element={<FusionDetail />} />
           <Route path="/collections/:id" element={<CollectionDetail />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
         </Routes>
       </div>
       <DevBadge />
+      <footer style={{
+        textAlign: 'center', 
+        padding: '24px 0', 
+        fontFamily: "'Nunito', sans-serif", 
+        fontSize: 12, 
+        color: 'var(--ink-400)'
+      }}>
+        <a href="/privacy" style={{ color: 'inherit', textDecoration: 'underline' }}>Privacy Policy</a>
+      </footer>
       {contactOpen && <ContactModal onClose={handleCloseContact} />}
     </>
   )

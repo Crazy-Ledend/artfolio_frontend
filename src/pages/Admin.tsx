@@ -695,7 +695,18 @@ function RequestsTab({ secret }: { secret: string }) {
                   {req.votes} {req.votes === 1 ? 'request' : 'requests'}
                 </span>
                 
-                <div style={{ display: 'flex', gap: 12, marginTop: 4 }}>
+                {req.requesters && req.requesters.length > 0 && (
+                  <details style={{ fontSize: 12, marginTop: 4, cursor: 'pointer', fontFamily: "'Nunito', sans-serif" }}>
+                    <summary style={{ color: 'var(--ink-500)' }}>Requested By</summary>
+                    <ul style={{ paddingLeft: 16, marginTop: 4, margin: '4px 0 0 0', color: 'var(--ink-800)', listStyleType: 'disc' }}>
+                      {req.requesters.map((r, i) => (
+                        <li key={i}>{r.username}</li>
+                      ))}
+                    </ul>
+                  </details>
+                )}
+
+                <div style={{ display: 'flex', gap: 12, marginTop: req.requesters?.length ? 8 : 4 }}>
                   {req.completed ? (
                     <>
                       <span style={{ fontFamily: 'Nunito', fontSize: 12, color: '#27ae60', fontWeight: 700 }}>✓ Completed</span>
