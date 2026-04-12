@@ -241,7 +241,7 @@ const SOCIAL_ICONS: Record<string, { bg: string; fill: string; viewBox: string; 
   },
   deviantart: {
     bg: '#05cc47', fill: '#fff', viewBox: '0 0 24 24',
-    path: 'M18.941 0l-3.765 7.17-.893.179H7.059v5.714h4.571L4.941 24H.94l3.766-7.17.893-.179h7.224V11.5H8.252L15.059 0h3.882z'
+    path: 'M19.207 4.794l.23-.43V0H15.07l-.436.44-2.058 3.925-.646.436H4.58v5.993h4.04l.36.436-4.175 7.98-.24.43V24H8.93l.436-.44 2.07-3.925.644-.436h7.35v-5.993h-4.05l-.36-.438 4.186-7.977z'
   },
   youtube: {
     bg: '#ff0000', fill: '#fff', viewBox: '0 0 24 24',
