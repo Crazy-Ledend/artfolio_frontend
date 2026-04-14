@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
   getArtworks, createArtwork, updateArtwork, deleteArtwork,
   getCollections, createCollection, deleteCollection, getContacts,
@@ -151,7 +151,59 @@ function LoginScreen({ onLogin }: { onLogin: (s: string) => Promise<boolean> }) 
 }
 
 function emptyArtwork(): ArtworkFormData {
-  return { title: '', description: '', medium: '', dimensions: '', year: '', tags: '', collection_id: '', gdrive_url: '', gdrive_file_id: '', is_available: true, sort_order: 0, fusions: [] }
+  return { title: '', description: '', medium: '', dimensions: '', year: '', tags: '', collection_id: '', gdrive_url: '', gdrive_file_id: '', is_available: true, sort_order: 0, fusions: [], obtainable_in: [] }
+}
+
+const PREDEFINED_APPS = ['None', 'Mewbot']
+
+function AppsSelector({ value, onChange }: { value: string[], onChange: (val: string[]) => void }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener("mousedown", handleClick)
+    return () => document.removeEventListener("mousedown", handleClick)
+  }, [])
+
+  return (
+    <div className={styles.appsSelector} ref={ref}>
+      <button onClick={(e) => { e.preventDefault(); setOpen(!open) }} className={styles.appsSelectorBtn}>
+        <span>{value.length > 0 ? value.join(', ') : 'None'}</span>
+        <span className={styles.appsSelectorArrow}>▼</span>
+      </button>
+
+      {open && (
+        <div className={styles.appsSelectorPopup}>
+          {PREDEFINED_APPS.map(app => {
+            const isActive = app === 'None' ? value.length === 0 : value.includes(app)
+            return (
+              <button
+                key={app}
+                className={`${styles.appsSelectorOption} ${isActive ? styles.appsSelectorOptionActive : ''}`}
+                onClick={(e) => {
+                  e.preventDefault()
+                  if (app === 'None') {
+                    onChange([])
+                  } else {
+                    const next = value.includes(app) ? value.filter(v => v !== app) : [...value, app]
+                    onChange(next)
+                  }
+                  // Keep open to allow multi-select unless it's None
+                  if (app === 'None') setOpen(false)
+                }}
+              >
+                <span>{app}</span>
+                {isActive && <span className={styles.appsSelectorCheck}>✓</span>}
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
 }
 
 function ArtworksTab({ secret }: { secret: string }) {
@@ -174,7 +226,7 @@ function ArtworksTab({ secret }: { secret: string }) {
   useEffect(() => {
     getCollections({ limit: 100 })
       .then(r => setCollections(Array.isArray(r?.items) ? r.items : []))
-      .catch(() => {})
+      .catch(() => { })
   }, [])
 
   const loadArtworks = () => {
@@ -200,6 +252,7 @@ function ArtworksTab({ secret }: { secret: string }) {
       gdrive_url: '', gdrive_file_id: a.gdrive_file_id,
       is_available: a.is_available, sort_order: a.sort_order,
       fusions: Array.isArray(a.fusions) ? a.fusions : [],
+      obtainable_in: Array.isArray(a.obtainable_in) ? a.obtainable_in : [],
     })
     setEditTarget(a.id); setShowForm(true); setSaveError('')
   }
@@ -223,6 +276,7 @@ function ArtworksTab({ secret }: { secret: string }) {
         gdrive_file_id: form.gdrive_file_id,
         is_available: form.is_available,
         fusions: form.fusions,
+        obtainable_in: form.obtainable_in,
       } as unknown as Partial<ArtworkFormData>
       if (editTarget) await updateArtwork(editTarget, payload, secret)
       else await createArtwork(payload, secret)
@@ -245,14 +299,14 @@ function ArtworksTab({ secret }: { secret: string }) {
       <div className={styles.countsRow}>
         <span className={styles.countLabel}>{totalItems} artworks</span>
         <form onSubmit={(e) => { e.preventDefault(); setPage(1); setSearchQuery(searchInput) }} className={styles.searchForm}>
-           <input 
-             value={searchInput} 
-             onChange={e => setSearchInput(e.target.value)} 
-             className={styles.input}
-             placeholder="Search by fusions, title…"
-             style={{ margin: 0, padding: '6px 12px' }}
-           />
-           <button type="submit" className={styles.btnSecondary} style={{ padding: '6px 12px', flexShrink: 0 }}>Search</button>
+          <input
+            value={searchInput}
+            onChange={e => setSearchInput(e.target.value)}
+            className={styles.input}
+            placeholder="Search by fusions, title…"
+            style={{ margin: 0, padding: '6px 12px' }}
+          />
+          <button type="submit" className={styles.btnSecondary} style={{ padding: '6px 12px', flexShrink: 0 }}>Search</button>
         </form>
         <button onClick={openNew} className={styles.btnAdd}>
           <span className={styles.desktopText}>+ Add artwork</span>
@@ -283,6 +337,10 @@ function ArtworksTab({ secret }: { secret: string }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingTop: 18 }}>
               <input type="checkbox" checked={form.is_available} onChange={e => setF('is_available', e.target.checked)} />
               <span style={{ fontFamily: "'Nunito'", fontSize: 13, color: 'var(--ink-600)', fontWeight: 600 }}>Available for enquiry</span>
+            </div>
+            <div>
+              <label className={styles.fieldLabel}>Obtainable in</label>
+              <AppsSelector value={form.obtainable_in} onChange={val => setF('obtainable_in', val)} />
             </div>
 
             {/* Pokémon fusions — full width */}
@@ -337,20 +395,20 @@ function ArtworksTab({ secret }: { secret: string }) {
           ))}
           {totalPages > 1 && (
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16 }}>
-              <button 
-                 disabled={page <= 1} 
-                 onClick={() => setPage(p => p - 1)} 
-                 className={styles.btnSecondary}
+              <button
+                disabled={page <= 1}
+                onClick={() => setPage(p => p - 1)}
+                className={styles.btnSecondary}
               >
-                 Previous
+                Previous
               </button>
               <span style={{ fontFamily: 'Nunito', fontSize: 13, color: 'var(--ink-500)', fontWeight: 600 }}>Page {page} of {totalPages}</span>
-              <button 
-                 disabled={page >= totalPages} 
-                 onClick={() => setPage(p => p + 1)} 
-                 className={styles.btnSecondary}
+              <button
+                disabled={page >= totalPages}
+                onClick={() => setPage(p => p + 1)}
+                className={styles.btnSecondary}
               >
-                 Next
+                Next
               </button>
             </div>
           )}
@@ -383,7 +441,7 @@ function CollectionsTab({ secret }: { secret: string }) {
       .catch(() => { })
       .finally(() => setLoading(false))
   }
-  
+
   useEffect(() => { load() }, [page, searchQuery])
 
   const handleCreate = async () => {
@@ -407,14 +465,14 @@ function CollectionsTab({ secret }: { secret: string }) {
       <div className={styles.countsRow}>
         <span className={styles.countLabel}>{totalItems} collections</span>
         <form onSubmit={(e) => { e.preventDefault(); setPage(1); setSearchQuery(searchInput) }} className={styles.searchForm}>
-           <input 
-             value={searchInput} 
-             onChange={e => setSearchInput(e.target.value)} 
-             className={styles.input}
-             placeholder="Search collections…"
-             style={{ margin: 0, padding: '6px 12px' }}
-           />
-           <button type="submit" className={styles.btnSecondary} style={{ padding: '6px 12px', flexShrink: 0 }}>Search</button>
+          <input
+            value={searchInput}
+            onChange={e => setSearchInput(e.target.value)}
+            className={styles.input}
+            placeholder="Search collections…"
+            style={{ margin: 0, padding: '6px 12px' }}
+          />
+          <button type="submit" className={styles.btnSecondary} style={{ padding: '6px 12px', flexShrink: 0 }}>Search</button>
         </form>
       </div>
 
@@ -694,7 +752,7 @@ function RequestsTab({ secret }: { secret: string }) {
                 <span style={{ fontFamily: 'Silkscreen,monospace', fontSize: 10, color: 'var(--accent)', letterSpacing: '0.08em' }}>
                   {req.votes} {req.votes === 1 ? 'request' : 'requests'}
                 </span>
-                
+
                 {req.requesters && req.requesters.length > 0 && (
                   <details style={{ fontSize: 12, marginTop: 4, cursor: 'pointer', fontFamily: "'Nunito', sans-serif" }}>
                     <summary style={{ color: 'var(--ink-500)' }}>Requested By</summary>

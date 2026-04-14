@@ -677,6 +677,27 @@ export default function FusionDetail() {
             )}
           </div>
         )}
+
+        {/* Obtainable in section */}
+        {active && active.obtainable_in && active.obtainable_in.length > 0 && (
+          <div className={styles.obtainableSection}>
+            <p className={styles.obtainableLabel}>Obtainable in:</p>
+            <div className={styles.capsuleRow}>
+              {active.obtainable_in.map(app => (
+                <div key={app} className={styles.appCapsule} data-app={app}>
+                   {app === 'Mewbot' && (
+                     <img 
+                       src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png" 
+                       alt="" 
+                       style={{ width: 14, height: 14, imageRendering: 'pixelated' }} 
+                     />
+                   )}
+                   {app}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {related.length > 0 && (

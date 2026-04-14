@@ -15,6 +15,7 @@ export interface Artwork {
   created_at: string
   updated_at: string
   fusions: string[]   // lowercase pokemon names
+  obtainable_in: string[]
   like_count: number
   liked_by_me: boolean
 }
@@ -98,6 +99,7 @@ export interface ArtworkFormData {
   is_available: boolean
   sort_order: number
   fusions: string[]   // array of pokemon names
+  obtainable_in: string[]
 }
 
 export interface CollectionFormData {
@@ -128,6 +130,9 @@ export interface FusionArtwork {
   medium?: string
   year?: number
   tags: string[]
+  obtainable_in: string[]
+  like_count: number
+  liked_by_me: boolean
 }
 
 export interface FusionMap {
@@ -199,19 +204,4 @@ export interface DiscordUser {
   username: string
   avatar?: string
   discriminator: string
-}
-
-export interface FusionArtwork {
-  id: string
-  title: string
-  description?: string
-  medium?: string
-  year?: number
-  tags: string[]
-  fusions: string[]
-  image_url: string
-  full_url: string
-  // ↓ new
-  like_count: number
-  liked_by_me: boolean
 }
