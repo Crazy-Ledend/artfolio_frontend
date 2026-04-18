@@ -9,8 +9,8 @@ function FilterSelector({
   value,
   onChange
 }: {
-  value: 'all' | 'fused',
-  onChange: (val: 'all' | 'fused') => void
+  value: 'all' | 'fused' | 'recent',
+  onChange: (val: 'all' | 'fused' | 'recent') => void
 }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -23,7 +23,7 @@ function FilterSelector({
     return () => document.removeEventListener("mousedown", handleClick)
   }, [])
 
-  const options: { label: string; value: 'all' | 'fused' }[] = [
+  const options: { label: string; value: 'all' | 'fused' | 'recent' }[] = [
     { label: 'All Pokémon', value: 'all' },
     { label: 'Available Fusions', value: 'fused' }
   ]
@@ -32,7 +32,9 @@ function FilterSelector({
     <div className={styles.filterSelector} ref={ref}>
       <button onClick={() => setOpen(!open)} className={styles.filterSelectorBtn}>
         <span>{options.find(o => o.value === value)?.label}</span>
-        <span className={styles.filterSelectorArrow}>▼</span>
+        <svg width="10" height="6" viewBox="0 0 10 6" fill="none" className={styles.filterSelectorArrow}>
+          <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
       </button>
 
       {open && (
@@ -47,7 +49,61 @@ function FilterSelector({
               }}
             >
               <span>{opt.label}</span>
-              {value === opt.value && <span className={styles.filterCheck}>✓</span>}
+              {value === opt.value && <span className={styles.filterCheck}>●</span>}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function SortSelector({
+  value,
+  onChange
+}: {
+  value: 'id-asc' | 'newest' | 'oldest',
+  onChange: (val: 'id-asc' | 'newest' | 'oldest') => void
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener("mousedown", handleClick)
+    return () => document.removeEventListener("mousedown", handleClick)
+  }, [])
+
+  const options: { label: string; value: 'id-asc' | 'newest' | 'oldest' }[] = [
+    { label: 'Default', value: 'id-asc' },
+    { label: 'Newest Added', value: 'newest' },
+    { label: 'Oldest Added', value: 'oldest' },
+  ]
+
+  return (
+    <div className={styles.filterSelector} ref={ref}>
+      <button onClick={() => setOpen(!open)} className={styles.filterSelectorBtn}>
+        <span>{options.find(o => o.value === value)?.label}</span>
+        <svg width="10" height="6" viewBox="0 0 10 6" fill="none" className={styles.filterSelectorArrow}>
+          <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </button>
+
+      {open && (
+        <div className={styles.filterSelectorPopup}>
+          {options.map(opt => (
+            <button
+              key={opt.value}
+              className={`${styles.filterSelectorOption} ${value === opt.value ? styles.filterSelectorOptionActive : ''}`}
+              onClick={() => {
+                onChange(opt.value)
+                setOpen(false)
+              }}
+            >
+              <span>{opt.label}</span>
+              {value === opt.value && <span className={styles.filterCheck}>●</span>}
             </button>
           ))}
         </div>
@@ -62,7 +118,8 @@ export default function Gallery() {
   const [fusionMap, setFusionMap] = useState<FusionMap>({})
   const [fusionLoading, setFusionLoading] = useState(true)
   const [search, setSearch] = useState('')
-  const [filterMode, setFilterMode] = useState<'all' | 'fused'>('all')
+  const [filterMode, setFilterMode] = useState<'all' | 'fused' | 'recent'>('all')
+  const [sortMode, setSortMode] = useState<'id-asc' | 'newest' | 'oldest'>('id-asc')
   const loading = pokeLoading || fusionLoading
 
   useEffect(() => {
@@ -72,16 +129,36 @@ export default function Gallery() {
       .finally(() => setFusionLoading(false))
   }, [])
 
-
+  const latestFusionDate = useCallback((name: string) => {
+    if (!fusionMap[name] || fusionMap[name].length === 0) return 0
+    return Math.max(...fusionMap[name].map(f => new Date(f.created_at || 0).getTime()))
+  }, [fusionMap])
 
   const hasFusion = useCallback((name: string) =>
     name in fusionMap && fusionMap[name].length > 0
     , [fusionMap])
 
+  const isRecent = useCallback((name: string) => {
+    const latest = latestFusionDate(name);
+    if (!latest) return false;
+    return (Date.now() - latest) <= 7 * 24 * 60 * 60 * 1000;
+  }, [latestFusionDate])
+
   const filtered = pokemon.filter(p => {
     const matchesSearch = search ? p.name.includes(search.toLowerCase()) : true
-    const matchesFilter = filterMode === 'fused' ? hasFusion(p.name) : true
+    let matchesFilter = true;
+    if (filterMode === 'fused') matchesFilter = hasFusion(p.name);
+    else if (filterMode === 'recent') matchesFilter = isRecent(p.name);
     return matchesSearch && matchesFilter
+  }).sort((a, b) => {
+    if (sortMode === 'id-asc') return a.id - b.id;
+    if (sortMode === 'newest') return latestFusionDate(b.name) - latestFusionDate(a.name);
+    if (sortMode === 'oldest') {
+      const aDate = latestFusionDate(a.name) || Infinity;
+      const bDate = latestFusionDate(b.name) || Infinity;
+      return aDate - bDate;
+    }
+    return 0;
   })
 
   return (
@@ -123,6 +200,7 @@ export default function Gallery() {
             {/* <span className={styles.legendCount}>{Object.keys(fusionMap).length} fused</span> */}
             <div className={styles.filterWrapper}>
               <FilterSelector value={filterMode} onChange={setFilterMode} />
+              <SortSelector value={sortMode} onChange={setSortMode} />
             </div>
           </div>
         </div>
@@ -142,6 +220,7 @@ export default function Gallery() {
                     key={poke.id}
                     poke={poke}
                     active={hasFusion(poke.name)}
+                    isRecent={isRecent(poke.name)}
                     onClick={() => navigate(`/pokemon/${poke.name}`)}
                   />
                 ))}
@@ -168,7 +247,7 @@ export default function Gallery() {
 
 // ── PokeCard ─────────────────────────────────────────────────────────────
 
-function PokeCard({ poke, active, onClick }: { poke: Pokemon; active: boolean; onClick: () => void }) {
+function PokeCard({ poke, active, isRecent, onClick }: { poke: Pokemon; active: boolean; isRecent: boolean; onClick: () => void }) {
   const [imgLoaded, setImgLoaded] = useState(false)
 
   return (
@@ -178,6 +257,7 @@ function PokeCard({ poke, active, onClick }: { poke: Pokemon; active: boolean; o
       title={active ? `${poke.name} — click to see fusion art` : poke.name}
       style={{ cursor: active ? 'pointer' : 'default' }}
     >
+      {isRecent && <div className={styles.newCapsule}>NEW</div>}
       <img
         src={poke.sprite}
         alt={poke.name}

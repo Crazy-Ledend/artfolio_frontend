@@ -175,13 +175,14 @@
   position: relative;
   z-index: 100;
   display: flex;
+  gap: 8px;
   margin-top: 8px;
-  width: 30%;
 }
 
 .filterSelector {
   position: relative;
-  width: 100%;
+  flex: 1;
+  min-width: 150px;
 }
 
 .filterSelectorBtn {
@@ -210,8 +211,8 @@
 }
 
 .filterSelectorArrow {
-  font-size: 9px;
   color: var(--ink-400);
+  display: block;
 }
 
 .filterSelectorPopup {
@@ -589,4 +590,30 @@
 /* Glow element hidden by default */
 .tile .tileGlow {
   display: none;
+}
+
+.newCapsule {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: linear-gradient(135deg, #ff5f57, #fe827c);
+  color: #fff;
+  font-family: 'Numito', sans-serif;
+  font-size: 8px;
+  font-weight: 900;
+  padding: 3px 6px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(255, 95, 87, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+  z-index: 20;
+  pointer-events: none;
+  animation: floatPop 2s ease-in-out infinite alternate;
+}
+
+@keyframes floatPop {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    transform: translateY(-2px) scale(1.05);
+  }
 }

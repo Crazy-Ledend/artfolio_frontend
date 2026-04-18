@@ -133,6 +133,7 @@ export interface FusionArtwork {
   obtainable_in: string[]
   like_count: number
   liked_by_me: boolean
+  created_at?: string
 }
 
 export interface FusionMap {
