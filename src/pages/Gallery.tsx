@@ -257,7 +257,7 @@ function PokeCard({ poke, active, isRecent, onClick }: { poke: Pokemon; active: 
       title={active ? `${poke.name} — click to see fusion art` : poke.name}
       style={{ cursor: active ? 'pointer' : 'default' }}
     >
-      {isRecent && <div className={styles.newCapsule}>NEW</div>}
+      {isRecent && <div className={styles.newDot} />}
       <img
         src={poke.sprite}
         alt={poke.name}
