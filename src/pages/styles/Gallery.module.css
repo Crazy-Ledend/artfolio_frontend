@@ -594,8 +594,8 @@
 
 .newCapsule {
   position: absolute;
-  top: -6px;
-  right: -6px;
+  top: 4px;
+  right: 4px;
   background: linear-gradient(135deg, #ff5f57, #fe827c);
   color: #fff;
   font-family: 'Numito', sans-serif;
