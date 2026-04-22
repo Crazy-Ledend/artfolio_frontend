@@ -46,22 +46,30 @@
     border: 1px solid rgba(255, 255, 255, 0.25);
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
   }
+}
 
-  /* Fixing fixed gradient background jitter on Safari iOS/macOS */
-  html, body {
-    background-attachment: initial;
-    /* Adding a subtle safari-only gradient pulse over the background */
-    animation: safariBgPulse 20s ease-in-out infinite alternate;
+/* --- BULLETPROOF iOS MEMORY LIMIT FIX FOR OLD & NEW DEVICES --- */
+/* Target strictly iOS WebKit (Safari, Chrome iOS, Firefox iOS) */
+@supports (-webkit-touch-callout: none) {
+  /* Completely disable backdrop-filter on iOS to prevent memory overflow (Jetsam crash) */
+  .glass, .glass-input, .dev-badge, [class*='glass'], div {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
   }
-
-  @keyframes safariBgPulse {
-    0% {
-      background-size: 100% 100%;
-      background-position: left top;
-    }
-    100% {
-      background-size: 150% 150%;
-      background-position: right bottom;
-    }
+  
+  /* Fallback slightly opaque styling to maintain aesthetics without GPU crushing */
+  .glass {
+    background: var(--glass-bg) !important;
+    opacity: 0.98;
+  }
+  
+  .glass-input {
+    background: var(--glass-input) !important;
+    opacity: 0.98;
+  }
+  
+  /* Force hardware acceleration down entirely */
+  * {
+    -webkit-backface-visibility: initial !important;
   }
 }
