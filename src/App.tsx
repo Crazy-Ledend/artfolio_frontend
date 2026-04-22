@@ -56,7 +56,10 @@ function AppContent() {
 
   // Wake up Render backend immediately on app load
   useEffect(() => {
-    fetch('/api/ping').catch(() => { })
+    const pingUrl = import.meta.env.PROD
+      ? 'https://artfolio-api-g8en.onrender.com/ping'
+      : '/api/ping'
+    fetch(pingUrl).catch(() => { })
   }, [])
 
   return (

@@ -3,73 +3,45 @@
 @supports (background: -webkit-named-image(i)) {
   /* Safari specific tweaks to glassmorphism */
   .glass, .glass-input, .dev-badge {
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-    /* Memory Crash Fixes for iOS (Jetsam Events) */
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
+    /* Hardware acceleration specifically for WebKit to reduce lag */
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
+    will-change: transform;
   }
 
-  /* Enhanced pulse badge for Safari */
+  /* Extremely lightweight pulse. Removed heavy filter drop-shadow to fix lag on old devices. */
   .dev-badge-dot {
-    animation: pulseBadgeSafari 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate !important;
+    animation: safariPulse 2s ease-in-out infinite alternate !important;
   }
 
-  @keyframes pulseBadgeSafari {
-    0% {
-      transform: scale(0.85);
-      filter: drop-shadow(0 0 5px var(--accent));
-    }
-    100% {
-      transform: scale(1.35);
-      filter: drop-shadow(0 0 18px var(--accent));
-      background: var(--decor-spiral-1);
-    }
+  @keyframes safariPulse {
+    0% { transform: scale(0.9); }
+    100% { transform: scale(1.15); background: var(--decor-spiral-1); }
   }
 
-  /* Safari specific float animation on hover for dev-badge instead of default transform */
   .dev-badge {
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: transform 0.4s ease;
+    will-change: transform;
   }
 
   .dev-badge:hover {
     transform: translateY(-6px) scale(1.05);
-    background: rgba(255, 255, 255, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  }
-  
-  [data-theme="dark"] .dev-badge:hover {
-    background: rgba(20, 20, 25, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
   }
 }
 
 /* --- BULLETPROOF iOS MEMORY LIMIT FIX FOR OLD & NEW DEVICES --- */
 /* Target strictly iOS WebKit (Safari, Chrome iOS, Firefox iOS) */
 @supports (-webkit-touch-callout: none) {
-  /* Completely disable backdrop-filter on iOS to prevent memory overflow (Jetsam crash) */
-  .glass, .glass-input, .dev-badge, [class*='glass'], div {
+  /* Completely disable backdrop-filter on iOS to prevent Jetsam memory crashes */
+  * {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
   }
   
   /* Fallback slightly opaque styling to maintain aesthetics without GPU crushing */
-  .glass {
-    background: var(--glass-bg) !important;
-    opacity: 0.98;
-  }
-  
-  .glass-input {
-    background: var(--glass-input) !important;
-    opacity: 0.98;
-  }
-  
-  /* Force hardware acceleration down entirely */
-  * {
-    -webkit-backface-visibility: initial !important;
+  .glass, .glass-input {
+    background: var(--bg-mid) !important;
   }
 }
