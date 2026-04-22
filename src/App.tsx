@@ -39,7 +39,7 @@ function AuthCallback() {
       setToken(token)
     }
     navigate('/', { replace: true })
-  }, [location, navigate, setToken])
+  }, [])
 
   return (
     <div className="flex items-center justify-center min-h-screen">
@@ -77,10 +77,10 @@ function AppContent() {
       </div>
       <DevBadge />
       <footer style={{
-        textAlign: 'center', 
-        padding: '24px 0', 
-        fontFamily: "'Nunito', sans-serif", 
-        fontSize: 12, 
+        textAlign: 'center',
+        padding: '24px 0',
+        fontFamily: "'Nunito', sans-serif",
+        fontSize: 12,
         color: 'var(--ink-400)'
       }}>
         <a href="/privacy" style={{ color: 'inherit', textDecoration: 'underline' }}>Privacy Policy</a>

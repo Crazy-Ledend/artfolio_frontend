@@ -1,0 +1,67 @@
+/* ── Safari Exclusive Styling & Animations ── */
+
+@supports (background: -webkit-named-image(i)) {
+  /* Safari specific tweaks to glassmorphism */
+  .glass, .glass-input, .dev-badge {
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    /* Memory Crash Fixes for iOS (Jetsam Events) */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  /* Enhanced pulse badge for Safari */
+  .dev-badge-dot {
+    animation: pulseBadgeSafari 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate !important;
+  }
+
+  @keyframes pulseBadgeSafari {
+    0% {
+      transform: scale(0.85);
+      filter: drop-shadow(0 0 5px var(--accent));
+    }
+    100% {
+      transform: scale(1.35);
+      filter: drop-shadow(0 0 18px var(--accent));
+      background: var(--decor-spiral-1);
+    }
+  }
+
+  /* Safari specific float animation on hover for dev-badge instead of default transform */
+  .dev-badge {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .dev-badge:hover {
+    transform: translateY(-6px) scale(1.05);
+    background: rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  }
+  
+  [data-theme="dark"] .dev-badge:hover {
+    background: rgba(20, 20, 25, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Fixing fixed gradient background jitter on Safari iOS/macOS */
+  html, body {
+    background-attachment: initial;
+    /* Adding a subtle safari-only gradient pulse over the background */
+    animation: safariBgPulse 20s ease-in-out infinite alternate;
+  }
+
+  @keyframes safariBgPulse {
+    0% {
+      background-size: 100% 100%;
+      background-position: left top;
+    }
+    100% {
+      background-size: 150% 150%;
+      background-position: right bottom;
+    }
+  }
+}
