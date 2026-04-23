@@ -457,3 +457,16 @@
   object-fit: contain;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
+
+/* ── iOS glass fallback — opaque backgrounds when backdrop-filter is stripped ── */
+:global(.ios) .heroBg,
+:global(.ios) .statCard,
+:global(.ios) .bioCard,
+:global(.ios) .socialsCard,
+:global(.ios) .kofiBadge {
+  background: var(--ios-glass-fallback, var(--bg-mid));
+}
+
+:global(.ios) .socialRow {
+  background: var(--ios-glass-input-fallback, var(--bg-mid));
+}

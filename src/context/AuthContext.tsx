@@ -30,11 +30,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(res.data)
       localStorage.setItem('artfolio-token', token)
     } catch (err: any) {
-      // Token expired or invalid — clear it
+      // Only clear token on explicit 401 (expired/invalid)
+      // Network errors (timeout, CORS, cold-start) should NOT wipe the token
+      // — wiping it on network errors causes a login loop on iOS when backend is cold
       if (err.response?.status === 401) {
         localStorage.removeItem('artfolio-token')
+        setUser(null)
       }
-      setUser(null)
+      // For non-401 errors, keep the token but set user to null temporarily
+      // User can retry on next page load
+      if (!err.response || err.response.status !== 401) {
+        setUser(null)
+      }
     } finally {
       setLoading(false)
     }

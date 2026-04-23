@@ -452,3 +452,15 @@
     margin-left: 4px;
   }
 }
+
+/* ── iOS glass fallback — opaque backgrounds when backdrop-filter is stripped ── */
+:global(.ios) .navbar__inner,
+:global(.ios) .dropdown,
+:global(.ios) .profileDropdown {
+  background: var(--ios-glass-fallback, var(--bg-mid));
+}
+
+:global(.ios) .userProfile,
+:global(.ios) .loginBtn {
+  background: var(--ios-glass-input-fallback, var(--bg-mid));
+}

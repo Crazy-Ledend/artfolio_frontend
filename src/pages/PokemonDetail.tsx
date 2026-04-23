@@ -34,7 +34,7 @@ function FilterSelector({
     <div className={styles.filterSelector} ref={ref}>
       <button onClick={() => setOpen(!open)} className={styles.filterSelectorBtn}>
         <span>{options.find(o => o.value === value)?.label}</span>
-        <span className={styles.filterSelectorArrow}>▼</span>
+        <span className={styles.filterSelectorArrow}><path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></span>
       </button>
 
       {open && (

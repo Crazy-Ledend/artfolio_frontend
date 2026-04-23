@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Gallery from './pages/Gallery'
@@ -31,15 +31,26 @@ function AuthCallback() {
   const { setToken } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
+  const processed = useRef(false)
 
   useEffect(() => {
+    if (processed.current) return // guard against double-fire (StrictMode + Safari popstate)
+    processed.current = true
+
     const params = new URLSearchParams(location.search)
     const token = params.get('token')
     if (token) {
       setToken(token)
     }
-    navigate('/', { replace: true })
-  }, [])
+
+    // Defer navigation to let Safari's internal state settle
+    // Prevents re-triggering popstate during auth state flush
+    const timer = setTimeout(() => {
+      navigate('/', { replace: true })
+    }, 0)
+
+    return () => clearTimeout(timer)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="flex items-center justify-center min-h-screen">
@@ -59,7 +70,13 @@ function AppContent() {
     const pingUrl = import.meta.env.PROD
       ? 'https://artfolio-api-g8en.onrender.com/ping'
       : '/api/ping'
-    fetch(pingUrl).catch(() => { })
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 5000) // 5s max
+    fetch(pingUrl, { signal: controller.signal }).catch(() => { })
+    return () => {
+      clearTimeout(timeout)
+      controller.abort()
+    }
   }, [])
 
   return (

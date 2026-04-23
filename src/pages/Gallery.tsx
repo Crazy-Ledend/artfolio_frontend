@@ -33,7 +33,7 @@ function FilterSelector({
       <button onClick={() => setOpen(!open)} className={styles.filterSelectorBtn}>
         <span>{options.find(o => o.value === value)?.label}</span>
         <svg width="10" height="6" viewBox="0 0 10 6" fill="none" className={styles.filterSelectorArrow}>
-          <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
 
@@ -87,7 +87,7 @@ function SortSelector({
       <button onClick={() => setOpen(!open)} className={styles.filterSelectorBtn}>
         <span>{options.find(o => o.value === value)?.label}</span>
         <svg width="10" height="6" viewBox="0 0 10 6" fill="none" className={styles.filterSelectorArrow}>
-          <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
 
@@ -161,6 +161,24 @@ export default function Gallery() {
     return 0;
   })
 
+  // Incremental rendering: render in batches to prevent iOS memory pressure
+  const BATCH_SIZE = 100
+  const [visibleCount, setVisibleCount] = useState(BATCH_SIZE)
+
+  // Reset visible count when filter/search changes
+  useEffect(() => {
+    setVisibleCount(BATCH_SIZE)
+  }, [search, filterMode, sortMode])
+
+  // Progressively load more tiles
+  useEffect(() => {
+    if (visibleCount >= filtered.length) return
+    const timer = setTimeout(() => {
+      setVisibleCount(c => Math.min(c + BATCH_SIZE, filtered.length))
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [visibleCount, filtered.length])
+
   return (
     <div className={styles.page}>
       <div className={styles.dex}>
@@ -215,7 +233,7 @@ export default function Gallery() {
               </div>
             ) : (
               <div className={styles.grid}>
-                {filtered.map(poke => (
+                {filtered.slice(0, visibleCount).map(poke => (
                   <PokeCard
                     key={poke.id}
                     poke={poke}

@@ -31,7 +31,7 @@
   }
 }
 
-/* --- BULLETPROOF iOS MEMORY LIMIT FIX FOR OLD & NEW DEVICES --- */
+/* ── BULLETPROOF iOS MEMORY LIMIT FIX FOR OLD & NEW DEVICES ── */
 /* Target strictly iOS WebKit (Safari, Chrome iOS, Firefox iOS) */
 @supports (-webkit-touch-callout: none) {
   /* Completely disable backdrop-filter on iOS to prevent Jetsam memory crashes */
@@ -40,8 +40,32 @@
     backdrop-filter: none !important;
   }
   
-  /* Fallback slightly opaque styling to maintain aesthetics without GPU crushing */
+  /* Fallback: opaque backgrounds for global glass classes */
   .glass, .glass-input {
     background: var(--bg-mid) !important;
   }
+
+  /* Disable heavy CSS filter effects that cause GPU pressure on iOS */
+  * {
+    filter: none !important;
+  }
+
+  /* Re-enable only safe, lightweight filters for specific use-cases */
+  img {
+    filter: unset !important;
+  }
+}
+
+/* ── iOS fallback backgrounds for CSS Module elements ── */
+/* Uses html.ios class set by JS in main.tsx for module-scoped targeting */
+html.ios {
+  /* All glass-like elements need opaque fallback when backdrop-filter is stripped */
+  /* Light theme */
+  --ios-glass-fallback: rgba(253, 232, 216, 0.92);
+  --ios-glass-input-fallback: rgba(250, 212, 180, 0.88);
+}
+
+html.ios[data-theme="dark"] {
+  --ios-glass-fallback: rgba(10, 12, 21, 0.92);
+  --ios-glass-input-fallback: rgba(20, 22, 35, 0.88);
 }

@@ -146,7 +146,7 @@ function FormSelector({
   return (
     <div className={styles.formSelector} ref={ref}>
       <button onClick={() => setOpen(!open)} className={styles.formSelectorBtn}>
-        {capitalize(currentName)} Forms <span className={styles.formSelectorArrow}>▼</span>
+        {capitalize(currentName)} Forms <span className={styles.formSelectorArrow}><path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></span>
       </button>
       {open && (
         <div className={styles.formSelectorPopup}>
@@ -411,7 +411,7 @@ export default function FusionDetail() {
             localStorage.removeItem(key)
             setRequested(false)
           }
-        }).catch(() => {})
+        }).catch(() => { })
       })
     } else {
       setRequested(false)
@@ -608,8 +608,7 @@ export default function FusionDetail() {
         <div
           className={styles.heroImageWrap}
           onClick={handleDoubleTap}
-          onTouchEnd={handleDoubleTap}
-          style={{ cursor: 'pointer', userSelect: 'none' }}
+          style={{ cursor: 'pointer', userSelect: 'none', WebkitTouchCallout: 'none' }}
         >
           {active && (
             <img
@@ -685,14 +684,14 @@ export default function FusionDetail() {
             <div className={styles.capsuleRow}>
               {active.obtainable_in.map(app => (
                 <div key={app} className={styles.appCapsule} data-app={app}>
-                   {app === 'Mewbot' && (
-                     <img 
-                       src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png" 
-                       alt="" 
-                       style={{ width: 14, height: 14, imageRendering: 'pixelated' }} 
-                     />
-                   )}
-                   {app}
+                  {app === 'Mewbot' && (
+                    <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png"
+                      alt=""
+                      style={{ width: 14, height: 14, imageRendering: 'pixelated' }}
+                    />
+                  )}
+                  {app}
                 </div>
               ))}
             </div>

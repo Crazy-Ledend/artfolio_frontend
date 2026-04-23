@@ -172,7 +172,7 @@ function AppsSelector({ value, onChange }: { value: string[], onChange: (val: st
     <div className={styles.appsSelector} ref={ref}>
       <button onClick={(e) => { e.preventDefault(); setOpen(!open) }} className={styles.appsSelectorBtn}>
         <span>{value.length > 0 ? value.join(', ') : 'None'}</span>
-        <span className={styles.appsSelectorArrow}>▼</span>
+        <span className={styles.appsSelectorArrow}><path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></span>
       </button>
 
       {open && (

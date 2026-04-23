@@ -662,3 +662,16 @@
     opacity: 0.8;
   }
 }
+
+/* ── iOS glass fallback — opaque backgrounds when backdrop-filter is stripped ── */
+:global(.ios) .dex,
+:global(.ios) .dexTop,
+:global(.ios) .dexBottom {
+  background: var(--ios-glass-fallback, var(--bg-mid));
+}
+
+:global(.ios) .searchBar,
+:global(.ios) .filterSelectorBtn,
+:global(.ios) .filterSelectorPopup {
+  background: var(--ios-glass-input-fallback, var(--bg-mid));
+}

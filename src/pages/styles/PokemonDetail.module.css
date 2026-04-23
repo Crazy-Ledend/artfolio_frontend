@@ -294,3 +294,15 @@
   letter-spacing: 0.05em; opacity: 0; transition: opacity 0.2s ease;
 }
 .tile--active:hover .tileNum { opacity: 0.8; }
+
+/* ── iOS glass fallback — opaque backgrounds when backdrop-filter is stripped ── */
+:global(.ios) .hero,
+:global(.ios) .heroCard,
+:global(.ios) .filterSelectorBtn,
+:global(.ios) .filterSelectorPopup {
+  background: var(--ios-glass-fallback, var(--bg-mid));
+}
+
+:global(.ios) .searchBar {
+  background: var(--ios-glass-input-fallback, var(--bg-mid));
+}
