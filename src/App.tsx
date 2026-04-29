@@ -65,7 +65,14 @@ function AppContent() {
   const location = useLocation()
 
   useEffect(() => {
-    trackVisit().catch(() => { })
+    const today = new Date().toISOString().split('T')[0]
+    const lastVisit = localStorage.getItem('artfolio_last_visit')
+
+    if (lastVisit !== today) {
+      trackVisit()
+        .then(() => localStorage.setItem('artfolio_last_visit', today))
+        .catch(() => { })
+    }
   }, [location.pathname])
 
   const handleOpenContact = useCallback(() => setContactOpen(true), [])
