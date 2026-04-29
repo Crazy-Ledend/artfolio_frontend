@@ -6,17 +6,18 @@ import {
 } from '../api/client'
 import type { Artwork, Collection, ContactRecord, ArtworkFormData, CollectionFormData } from '../types'
 import PokemonPicker from '../components/PokemonPicker'
-import { getProfile, updateProfile, getFusionRequests, deleteFusionRequest, completeFusionRequest } from '../api/client'
+import { getProfile, updateProfile, getFusionRequests, deleteFusionRequest, completeFusionRequest, getVisitorStats } from '../api/client'
 import type { ArtistProfile, SocialLink, FusionRequest } from '../types'
 import styles from './styles/Admin.module.css'
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 const SECRET_KEY = 'artfolio_admin_secret'
-type Tab = 'artworks' | 'collections' | 'messages' | 'profile' | 'requests'
+type Tab = 'visitors' | 'artworks' | 'collections' | 'messages' | 'profile' | 'requests'
 
 export default function Admin() {
   const [secret, setSecret] = useState(() => sessionStorage.getItem(SECRET_KEY) ?? '')
   const [authed, setAuthed] = useState(false)
-  const [tab, setTab] = useState<Tab>('artworks')
+  const [tab, setTab] = useState<Tab>('visitors')
 
   // Validate stored secret on mount using a lightweight admin endpoint
   useEffect(() => {
@@ -59,12 +60,14 @@ export default function Admin() {
         </div>
 
         <div className={styles.tabs}>
-          {(['artworks', 'collections', 'messages', 'requests', 'profile'] as Tab[]).map(t => (
+          {(['visitors', 'artworks', 'collections', 'messages', 'requests', 'profile'] as Tab[]).map(t => (
             <button key={t} onClick={() => setTab(t)} className={`${styles.tab} ${tab === t ? styles['tab--active'] : ''}`}>
               {t}
             </button>
           ))}
         </div>
+
+        {tab === 'visitors' && <VisitorsTab secret={secret} />}
 
         {tab === 'artworks' && <ArtworksTab secret={secret} />}
         {tab === 'collections' && <CollectionsTab secret={secret} />}
@@ -666,7 +669,6 @@ function ProfileTab({ secret }: { secret: string }) {
 // ── Requests Tab ──────────────────────────────────────────
 
 const SPRITE_BASE = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon'
-const _reqPokeIds: Record<string, number> = {}
 
 function RequestsTab({ secret }: { secret: string }) {
   const [requests, setRequests] = useState<FusionRequest[]>([])
@@ -795,6 +797,93 @@ function RequestsTab({ secret }: { secret: string }) {
           )}
         </div>
       )}
+    </div>
+  )
+}
+
+// ── Visitors Tab ──────────────────────────────────────────
+
+function VisitorsTab({ secret }: { secret: string }) {
+  const [stats, setStats] = useState<{ date: string; count: number }[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    getVisitorStats(secret)
+      .then(setStats)
+      .catch(() => { })
+      .finally(() => setLoading(false))
+  }, [secret])
+
+  const total = stats.reduce((sum, s) => sum + s.count, 0)
+  const today = stats[stats.length - 1]?.count ?? 0
+
+  if (loading) return <div style={{ padding: 24, color: 'var(--ink-400)', fontFamily: 'Nunito' }}>Loading stats…</div>
+
+  return (
+    <div style={{ maxWidth: 800 }}>
+      <div className={styles.statsGrid}>
+        <div className={styles.statCard}>
+          <p className={styles.statLabel}>Today's Visitors</p>
+          <p className={styles.statValue}>{today}</p>
+        </div>
+        <div className={styles.statCard}>
+          <p className={styles.statLabel}>Last 30 Days</p>
+          <p className={styles.statValue}>{total}</p>
+        </div>
+      </div>
+
+      <div className={styles.card} style={{ height: 400, paddingTop: 30, paddingRight: 30 }}>
+        <h3 style={{ fontFamily: "'Fredoka',sans-serif", fontSize: 20, color: 'var(--ink-800)', marginBottom: 20 }}>Visitor Traffic</h3>
+        <div style={{ width: '100%', height: '300px' }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={stats}>
+              <defs>
+                <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="var(--accent)" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="var(--accent)" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--glass-border)" vertical={false} />
+              <XAxis
+                dataKey="date"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: 'var(--ink-400)', fontSize: 10, fontFamily: 'Nunito' }}
+                tickFormatter={(str) => {
+                  const d = new Date(str)
+                  return d.getDate() === 1 || d.getDate() === 15 ? d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : ''
+                }}
+              />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: 'var(--ink-400)', fontSize: 10, fontFamily: 'Nunito' }}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'var(--glass-bg)',
+                  borderColor: 'var(--glass-border)',
+                  borderRadius: '12px',
+                  backdropFilter: 'blur(10px)',
+                  color: 'var(--ink-800)',
+                  fontFamily: 'Nunito',
+                  fontSize: '12px'
+                }}
+                itemStyle={{ color: 'var(--accent)' }}
+              />
+              <Area
+                type="monotone"
+                dataKey="count"
+                stroke="var(--accent)"
+                strokeWidth={3}
+                fillOpacity={1}
+                fill="url(#colorCount)"
+                animationDuration={1500}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
     </div>
   )
 }

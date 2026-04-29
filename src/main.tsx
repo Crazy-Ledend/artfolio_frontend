@@ -4,6 +4,7 @@ import App from './App'
 import { ThemeProvider } from './context/ThemeContext'
 import './index.css'
 import './safari.css'
+import { Analytics } from '@vercel/analytics/react'
 
 // Detect iOS for CSS targeting — enables `:global(.ios)` selectors in CSS Modules
 // This is needed because @supports (-webkit-touch-callout: none) cannot target
@@ -16,8 +17,9 @@ if (isIOS) {
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <ThemeProvider>
-      <App />
-    </ThemeProvider>
+      <ThemeProvider>
+        <App />
+        <Analytics />
+      </ThemeProvider>
   </React.StrictMode>
 )

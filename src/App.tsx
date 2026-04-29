@@ -11,6 +11,7 @@ import CollectionDetail from './pages/CollectionDetail'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import ContactModal from './components/ContactModal'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import { trackVisit } from './api/client'
 
 function DevBadge() {
   const { pathname } = useLocation()
@@ -61,6 +62,11 @@ function AuthCallback() {
 
 function AppContent() {
   const [contactOpen, setContactOpen] = useState(false)
+  const location = useLocation()
+
+  useEffect(() => {
+    trackVisit().catch(() => { })
+  }, [location.pathname])
 
   const handleOpenContact = useCallback(() => setContactOpen(true), [])
   const handleCloseContact = useCallback(() => setContactOpen(false), [])

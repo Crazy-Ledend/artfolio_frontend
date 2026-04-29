@@ -103,3 +103,11 @@ export async function toggleLike(artworkId: string): Promise<{ liked: boolean; l
   const res = await api.post(`/artworks/${artworkId}/like`, {})
   return res.data
 }
+
+// ── Analytics ─────────────────────────────────────────────
+
+export const trackVisit = (): Promise<void> =>
+  api.post('/analytics/track').then(() => { })
+
+export const getVisitorStats = (secret: string): Promise<{ date: string; count: number }[]> =>
+  api.get('/analytics/stats', { headers: { 'x-admin-secret': secret } }).then(r => r.data)
