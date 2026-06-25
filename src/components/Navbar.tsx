@@ -71,12 +71,13 @@ export default function Navbar({ onContactOpen }: NavbarProps) {
       <header className={styles.navbar}>
         <div className={styles.navbar__inner}>
           {/* Brand */}
-          <Link to="/profile" className={styles.navbar__brand}>pockét fusions</Link>
+          <Link to="/" className={styles.navbar__brand}>pockét fusions</Link>
 
           {/* Desktop nav */}
           <nav className={styles.navbar__nav}>
             <Link to="/" className={`${styles.navbar__link} ${pathname === '/' ? styles['navbar__link--active'] : ''}`}>Gallery</Link>
             <Link to="/collections" className={`${styles.navbar__link} ${pathname.startsWith('/collections') ? styles['navbar__link--active'] : ''}`}>Collections</Link>
+            <Link to="/profile" className={`${styles.navbar__link} ${pathname === '/profile' ? styles['navbar__link--active'] : ''}`}>About Artist</Link>
             <button onClick={onContactOpen} className={styles.navbar__btn}>Contact</button>
 
             <button onClick={toggle} className={styles.themeToggle} title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}>
@@ -149,6 +150,9 @@ export default function Navbar({ onContactOpen }: NavbarProps) {
             </Link>
             <Link to="/collections" onClick={() => setMenuOpen(false)} className={`${styles.dropItem} ${pathname.startsWith('/collections') ? styles['dropItem--active'] : ''}`}>
               Collections
+            </Link>
+            <Link to="/profile" onClick={() => setMenuOpen(false)} className={`${styles.dropItem} ${pathname === '/profile' ? styles['dropItem--active'] : ''}`}>
+              About Artist
             </Link>
             <button onClick={() => { onContactOpen(); setMenuOpen(false) }} className={styles.dropItem}>
               Contact
