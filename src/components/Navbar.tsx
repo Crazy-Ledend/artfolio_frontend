@@ -77,6 +77,7 @@ export default function Navbar({ onContactOpen }: NavbarProps) {
           <nav className={styles.navbar__nav}>
             <Link to="/" className={`${styles.navbar__link} ${pathname === '/' ? styles['navbar__link--active'] : ''}`}>Gallery</Link>
             <Link to="/collections" className={`${styles.navbar__link} ${pathname.startsWith('/collections') ? styles['navbar__link--active'] : ''}`}>Collections</Link>
+            <Link to="/stats" className={`${styles.navbar__link} ${pathname === '/stats' ? styles['navbar__link--active'] : ''}`}>Stats</Link>
             <Link to="/profile" className={`${styles.navbar__link} ${pathname === '/profile' ? styles['navbar__link--active'] : ''}`}>About Artist</Link>
             <button onClick={onContactOpen} className={styles.navbar__btn}>Contact</button>
 
@@ -150,6 +151,9 @@ export default function Navbar({ onContactOpen }: NavbarProps) {
             </Link>
             <Link to="/collections" onClick={() => setMenuOpen(false)} className={`${styles.dropItem} ${pathname.startsWith('/collections') ? styles['dropItem--active'] : ''}`}>
               Collections
+            </Link>
+            <Link to="/stats" onClick={() => setMenuOpen(false)} className={`${styles.dropItem} ${pathname === '/stats' ? styles['dropItem--active'] : ''}`}>
+              Stats
             </Link>
             <Link to="/profile" onClick={() => setMenuOpen(false)} className={`${styles.dropItem} ${pathname === '/profile' ? styles['dropItem--active'] : ''}`}>
               About Artist

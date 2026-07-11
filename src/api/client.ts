@@ -70,7 +70,7 @@ export const deleteContact = (id: string, secret: string): Promise<void> =>
 // ── Pokémon fusions ───────────────────────────────────────
 
 export const getFusionMap = (): Promise<{ fusions: FusionMap }> =>
-  api.get('/pokemon/fusions').then(r => r.data)
+  api.get(`/pokemon/fusions?t=${Date.now()}`).then(r => r.data)
 
 // ── Profile ───────────────────────────────────────────────
 

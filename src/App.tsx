@@ -9,6 +9,7 @@ import PokemonDetail from './pages/PokemonDetail'
 import FusionDetail from './pages/FusionDetail'
 import CollectionDetail from './pages/CollectionDetail'
 import PrivacyPolicy from './pages/PrivacyPolicy'
+import Stats from './pages/Stats'
 import ContactModal from './components/ContactModal'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { trackVisit } from './api/client'
@@ -98,6 +99,7 @@ function AppContent() {
       <div className="pt-0">
         <Routes>
           <Route path="/" element={<Gallery />} />
+          <Route path="/stats" element={<Stats />} />
           <Route path="/collections" element={<Collections />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/profile" element={<Profile />} />

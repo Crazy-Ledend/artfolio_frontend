@@ -3,7 +3,6 @@ import { usePokemonList } from '../hooks/usePokemonList'
 import { useNavigate } from 'react-router-dom'
 import { getFusionMap } from '../api/client'
 import type { Pokemon, FusionMap } from '../types'
-import StatsView from './components/StatsView'
 import styles from './styles/Gallery.module.css'
 
 function FilterSelector({
@@ -121,7 +120,6 @@ export default function Gallery() {
   const [search, setSearch] = useState('')
   const [filterMode, setFilterMode] = useState<'all' | 'fused' | 'recent'>('all')
   const [sortMode, setSortMode] = useState<'id-asc' | 'newest' | 'oldest'>('id-asc')
-  const [activeTab, setActiveTab] = useState<'dex' | 'stats'>('dex')
   const loading = pokeLoading || fusionLoading
 
   useEffect(() => {
@@ -194,52 +192,41 @@ export default function Gallery() {
             <span className={styles.dexTitle}>ArtFusion Dex</span>
           </div>
 
-          <div className={styles.tabsRow}>
-            <button className={`${styles.tabBtn} ${activeTab === 'dex' ? styles.tabBtnActive : ''}`} onClick={() => setActiveTab('dex')}>Dex</button>
-            <button className={`${styles.tabBtn} ${activeTab === 'stats' ? styles.tabBtnActive : ''}`} onClick={() => setActiveTab('stats')}>Stats</button>
+          <div className={styles.searchBar} style={{ marginTop: 12 }}>
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ color: 'var(--ink-400)', flexShrink: 0 }}>
+              <circle cx="5.5" cy="5.5" r="4" /><path d="M9 9l3 3" />
+            </svg>
+            <input
+              type="text" placeholder="Search Pokémon…"
+              value={search} onChange={e => setSearch(e.target.value)}
+              className={styles.searchInput}
+            />
+            {search && (
+              <button onClick={() => setSearch('')} className={styles.searchClear}>
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <path d="M1 1l8 8M9 1L1 9" />
+                </svg>
+              </button>
+            )}
           </div>
 
-          {activeTab === 'dex' && (
-            <>
-              <div className={styles.searchBar} style={{ marginTop: 12 }}>
-                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ color: 'var(--ink-400)', flexShrink: 0 }}>
-                  <circle cx="5.5" cy="5.5" r="4" /><path d="M9 9l3 3" />
-                </svg>
-                <input
-                  type="text" placeholder="Search Pokémon…"
-                  value={search} onChange={e => setSearch(e.target.value)}
-                  className={styles.searchInput}
-                />
-                {search && (
-                  <button onClick={() => setSearch('')} className={styles.searchClear}>
-                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                      <path d="M1 1l8 8M9 1L1 9" />
-                    </svg>
-                  </button>
-                )}
-              </div>
-
-              <div className={styles.legend}>
-                <div className={styles.legendLeft}>
-                  <span className={styles.legendItem}><span className={styles.legendDotActive} /> Has fusion art</span>
-                  <span className={styles.legendItem}><span className={styles.legendDotInactive} /> No fusion yet</span>
-                </div>
-                {/* <span className={styles.legendCount}>{Object.keys(fusionMap).length} fused</span> */}
-                <div className={styles.filterWrapper}>
-                  <FilterSelector value={filterMode} onChange={setFilterMode} />
-                  <SortSelector value={sortMode} onChange={setSortMode} />
-                </div>
-              </div>
-            </>
-          )}
+          <div className={styles.legend}>
+            <div className={styles.legendLeft}>
+              <span className={styles.legendItem}><span className={styles.legendDotActive} /> Has fusion art</span>
+              <span className={styles.legendItem}><span className={styles.legendDotInactive} /> No fusion yet</span>
+            </div>
+            {/* <span className={styles.legendCount}>{Object.keys(fusionMap).length} fused</span> */}
+            <div className={styles.filterWrapper}>
+              <FilterSelector value={filterMode} onChange={setFilterMode} />
+              <SortSelector value={sortMode} onChange={setSortMode} />
+            </div>
+          </div>
         </div>
 
         {/* Grid */}
         <div className={styles.dexBody}>
           <div className={styles.gridScreen}>
-            {activeTab === 'stats' ? (
-              <StatsView pokemon={pokemon} fusionMap={fusionMap} loading={loading} />
-            ) : loading ? (
+            {loading ? (
               <div className={styles.grid}>
                 {[...Array(30)].map((_, i) => (
                   <div key={i} className={styles.skeletonTile}></div>
