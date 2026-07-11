@@ -54,7 +54,7 @@ export default function StatsView({ pokemon, fusionMap, loading }: StatsViewProp
 
   const totalFusionsMade = uniqueArtworks.length
   const n = pokemon.length
-  const totalPossible = (n * (n + 1)) / 2
+  const totalPossible = n * n
 
   const fusedPokemonCount = pokemon.filter(p => fusionMap[p.name] && fusionMap[p.name].length > 0).length
   const totalPokemonCount = n
