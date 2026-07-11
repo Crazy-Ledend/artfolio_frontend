@@ -62,8 +62,10 @@ export default function StatsView({ pokemon, fusionMap, loading }: StatsViewProp
   const fusionsMadePercent = totalPossible > 0 ? (totalFusionsMade / totalPossible) * 100 : 0
   const fusedPokemonPercent = totalPokemonCount > 0 ? (fusedPokemonCount / totalPokemonCount) * 100 : 0
 
+  const totalLikes = uniqueArtworks.reduce((sum, art) => sum + (art.like_count || 0), 0)
+
   const top10Liked = [...uniqueArtworks]
-    .sort((a, b) => b.like_count - a.like_count)
+    .sort((a, b) => (b.like_count || 0) - (a.like_count || 0))
     .slice(0, 10)
 
   const capitalize = (s: string) => s ? s.charAt(0).toUpperCase() + s.slice(1) : ''
@@ -95,6 +97,18 @@ export default function StatsView({ pokemon, fusionMap, loading }: StatsViewProp
           </div>
           <div className={styles.progressBarTrack}>
             <div className={styles.progressBarFill} style={{ width: `${Math.min(100, fusedPokemonPercent)}%` }}></div>
+          </div>
+        </div>
+
+        <div className={styles.statRow} style={{ marginTop: 24 }}>
+          <div className={styles.statLabelRow}>
+            <span>Total Likes (All Fusions)</span>
+            <span className={styles.statValue} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+               <svg viewBox="0 0 24 24" width="12" height="12" fill="#e0443e">
+                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+               </svg>
+               {totalLikes}
+            </span>
           </div>
         </div>
       </div>
