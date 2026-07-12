@@ -19,6 +19,60 @@ api.interceptors.request.use((config) => {
   return config
 })
 
+// ── Fusion cache helpers ──────────────────────────────────
+
+const FUSION_CACHE_KEY = 'artfolio_fusion_cache'
+const FUSION_CACHE_TTL = 2 * 24 * 60 * 60 * 1000 // 2 days
+const FUSION_MIN_DELAY = 800 // ms — minimum loading screen duration
+
+interface FusionCacheEntry {
+  timestamp: number
+  data: { fusions: FusionMap }
+}
+
+/** Safely read and validate the cached fusion data. Returns null if absent, expired, or malformed. */
+function readFusionCache(): { fusions: FusionMap } | null {
+  try {
+    const raw = localStorage.getItem(FUSION_CACHE_KEY)
+    if (!raw) return null
+
+    const parsed: unknown = JSON.parse(raw)
+
+    // structural checks
+    if (typeof parsed !== 'object' || parsed === null) return null
+    const entry = parsed as Record<string, unknown>
+    if (typeof entry.timestamp !== 'number') return null
+    if (typeof entry.data !== 'object' || entry.data === null) return null
+
+    const data = entry.data as Record<string, unknown>
+    if (typeof data.fusions !== 'object' || data.fusions === null || Array.isArray(data.fusions)) return null
+
+    // TTL check
+    if (Date.now() - entry.timestamp > FUSION_CACHE_TTL) {
+      localStorage.removeItem(FUSION_CACHE_KEY)
+      return null
+    }
+
+    return data as { fusions: FusionMap }
+  } catch {
+    // JSON.parse failed — tampered or corrupted entry
+    localStorage.removeItem(FUSION_CACHE_KEY)
+    return null
+  }
+}
+
+function writeFusionCache(data: { fusions: FusionMap }): void {
+  try {
+    const entry: FusionCacheEntry = { timestamp: Date.now(), data }
+    localStorage.setItem(FUSION_CACHE_KEY, JSON.stringify(entry))
+  } catch { /* quota exceeded — silently skip */ }
+}
+
+/** Wipe the fusion cache so the next read fetches fresh data. */
+export function invalidateFusionCache(): void {
+  localStorage.removeItem(FUSION_CACHE_KEY)
+}
+
 // ── Artworks ──────────────────────────────────────────────
 
 export const getArtworks = (params: ArtworkFilters = {}): Promise<ArtworkListResponse> =>
@@ -31,13 +85,13 @@ export const getArtworkMeta = (): Promise<ArtworkMeta> =>
   api.get('/artworks/meta').then(r => r.data)
 
 export const createArtwork = (data: Partial<ArtworkFormData>, secret: string): Promise<Artwork> =>
-  api.post('/artworks', data, { headers: { 'x-admin-secret': secret } }).then(r => r.data)
+  api.post('/artworks', data, { headers: { 'x-admin-secret': secret } }).then(r => { invalidateFusionCache(); return r.data })
 
 export const updateArtwork = (id: string, data: Partial<ArtworkFormData>, secret: string): Promise<Artwork> =>
-  api.patch(`/artworks/${id}`, data, { headers: { 'x-admin-secret': secret } }).then(r => r.data)
+  api.patch(`/artworks/${id}`, data, { headers: { 'x-admin-secret': secret } }).then(r => { invalidateFusionCache(); return r.data })
 
 export const deleteArtwork = (id: string, secret: string): Promise<void> =>
-  api.delete(`/artworks/${id}`, { headers: { 'x-admin-secret': secret } })
+  api.delete(`/artworks/${id}`, { headers: { 'x-admin-secret': secret } }).then(() => { invalidateFusionCache() })
 
 // ── Collections ───────────────────────────────────────────
 
@@ -69,8 +123,25 @@ export const deleteContact = (id: string, secret: string): Promise<void> =>
 
 // ── Pokémon fusions ───────────────────────────────────────
 
-export const getFusionMap = (): Promise<{ fusions: FusionMap }> =>
-  api.get(`/pokemon/fusions?t=${Date.now()}`).then(r => r.data)
+export async function getFusionMap(): Promise<{ fusions: FusionMap }> {
+  const minDelay = new Promise<void>(res => setTimeout(res, FUSION_MIN_DELAY))
+
+  // Try cache first
+  const cached = readFusionCache()
+  if (cached) {
+    await minDelay
+    return cached
+  }
+
+  // Cache miss — fetch from backend, enforce minimum loading time
+  const [result] = await Promise.all([
+    api.get<{ fusions: FusionMap }>('/pokemon/fusions').then(r => r.data),
+    minDelay,
+  ])
+
+  writeFusionCache(result)
+  return result
+}
 
 // ── Profile ───────────────────────────────────────────────
 
