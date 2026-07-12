@@ -509,6 +509,8 @@ export default function FusionDetail() {
 
   if (!artworks.length || !poke1Data || !poke2Data) {
     const alreadyRequested = requested
+    const reverseExists = fusionMap[poke2 ?? '']?.some(a => a.fusions[0] === poke2 && a.fusions[1] === poke1)
+
     return (
       <div className={styles.page}>
         <div className={styles.noFusionWrap}>
@@ -516,13 +518,16 @@ export default function FusionDetail() {
             <button onClick={() => navigate(`/pokemon/${poke1}`)} className={styles.backBtn}>
               ← Back to {capitalize(poke1 ?? '')}
             </button>
-            <button
-              onClick={() => navigate(`/fusion/${poke2}/${poke1}`)}
-              className={styles.backBtn}
-              title="View reversed fusion"
-            >
-              Reverse ⇆
-            </button>
+            <div className={styles.reverseBtnWrap}>
+              {reverseExists && <div className={styles.reverseBtnGlowBg} />}
+              <button
+                onClick={() => navigate(`/fusion/${poke2}/${poke1}`)}
+                className={`${styles.backBtn} ${reverseExists ? styles.reverseBtnGlowBorder : ''}`}
+                title="View reversed fusion"
+              >
+                Reverse ⇆
+              </button>
+            </div>
           </div>
 
           {poke1Data && poke2Data && (

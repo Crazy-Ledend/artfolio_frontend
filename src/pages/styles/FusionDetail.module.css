@@ -73,6 +73,46 @@
   transform: translateX(-2px);
 }
 
+.reverseBtnWrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.reverseBtnGlowBg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--decor-spiral-1), var(--decor-spiral-3), var(--decor-spiral-2));
+  filter: blur(12px);
+  opacity: 0.6;
+  border-radius: 12px;
+  animation: unevenGlow 3s infinite alternate;
+  z-index: 0;
+  pointer-events: none;
+}
+
+@keyframes unevenGlow {
+  0% { transform: scale(1) translate(-2px, 2px); opacity: 0.5; }
+  50% { transform: scale(1.1) translate(2px, -1px); opacity: 0.7; }
+  100% { transform: scale(1.05) translate(-1px, -3px); opacity: 0.8; }
+}
+
+.reverseBtnGlowBorder {
+  position: relative;
+  z-index: 1;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5), inset 0 0 8px rgba(255, 255, 255, 0.5);
+  animation: borderPulse 2s infinite alternate;
+  background: var(--glass-bg);
+}
+
+@keyframes borderPulse {
+  0% { border-color: rgba(255, 255, 255, 0.4); }
+  100% { border-color: rgba(255, 255, 255, 1); box-shadow: 0 0 15px rgba(255, 255, 255, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.8); }
+}
+
 /* ── Hero ── */
 .hero {
   display: flex;
