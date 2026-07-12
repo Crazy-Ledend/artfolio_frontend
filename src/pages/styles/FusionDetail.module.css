@@ -84,7 +84,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, var(--decor-spiral-1), var(--decor-spiral-3), var(--decor-spiral-2));
+  background: var(--reverse-glow-bg);
   filter: blur(10px);
   border-radius: 12px;
   animation: unevenGlow 3s infinite alternate;
@@ -105,25 +105,27 @@
   box-shadow: 0 0 8px rgba(255, 255, 255, 0.3), inset 0 0 6px rgba(255, 255, 255, 0.3);
   animation: borderPulse 2s infinite alternate;
   background: var(--glass-bg);
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s, box-shadow 0.2s, color 0.2s, text-shadow 0.2s;
+  color: var(--ink-900); /* Bright/Prominent base color */
 }
 
 .reverseBtnGlowBorder:hover {
   transform: scale(1.08) translateY(-2px);
   background: rgba(255, 255, 255, 0.5);
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), inset 0 0 12px rgba(255, 255, 255, 0.6);
-  color: var(--ink-900);
+  color: var(--ink-500); /* Dull text color */
+  text-shadow: none !important; /* Remove glow */
 }
 
 @keyframes borderPulse {
   0% { 
     border-color: rgba(255, 255, 255, 0.3); 
-    text-shadow: 0 0 4px rgba(255, 255, 255, 0); 
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0); 
   }
   100% { 
     border-color: rgba(255, 255, 255, 0.8); 
     box-shadow: 0 0 12px rgba(255, 255, 255, 0.6), inset 0 0 8px rgba(255, 255, 255, 0.6); 
-    text-shadow: 0 0 6px rgba(255, 255, 255, 0.7); 
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.9); 
   }
 }
 

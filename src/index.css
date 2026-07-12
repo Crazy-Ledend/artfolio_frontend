@@ -33,6 +33,7 @@
   --decor-spiral-2: #59c82d;
   --decor-spiral-3: #5190f5;
   --decor-wave: #10cdcd;
+  --reverse-glow-bg: linear-gradient(135deg, #ff9a9e, #fecfef, #fbc2eb);
 }
 
 /* ── Dark theme ── */
@@ -63,6 +64,7 @@
   --decor-spiral-2: #6bff75;
   --decor-spiral-3: #417fe5;
   --decor-wave: #10cdcd;
+  --reverse-glow-bg: linear-gradient(135deg, var(--decor-spiral-1), var(--decor-spiral-3), var(--decor-spiral-2));
 }
 
 @layer base {
