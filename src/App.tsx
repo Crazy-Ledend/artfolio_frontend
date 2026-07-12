@@ -64,7 +64,15 @@ function AuthCallback() {
 function PageTransitions({ children }: { children: React.ReactNode }) {
   const location = useLocation()
   const [displayLocation, setDisplayLocation] = useState(location)
-  const [transitionStage, setTransitionStage] = useState('in')
+  const [transitionStage, setTransitionStage] = useState('enter')
+
+  useEffect(() => {
+    if (transitionStage === 'enter') {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => setTransitionStage('in'))
+      })
+    }
+  }, [transitionStage])
 
   useEffect(() => {
     if (location.pathname !== displayLocation.pathname) {
