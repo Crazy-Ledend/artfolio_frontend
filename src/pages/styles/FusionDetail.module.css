@@ -111,9 +111,9 @@
 
 .reverseBtnGlowBorder:hover {
   transform: scale(1.08) translateY(-2px);
-  background: rgba(255, 255, 255, 0.5);
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), inset 0 0 12px rgba(255, 255, 255, 0.6);
-  color: var(--ink-500); /* Dull text color */
+  background: var(--glass-input);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5), inset 0 0 8px rgba(255, 255, 255, 0.4);
+  color: var(--ink-800);
   text-shadow: none !important; /* Remove glow */
 }
 
