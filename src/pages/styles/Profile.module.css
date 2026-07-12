@@ -1,7 +1,6 @@
 .page {
   min-height: 100vh;
   /* background removed to allow body fixed gradient through */
-  padding-top: 54px;
   transition: background 0.3s;
 }
 
@@ -33,7 +32,7 @@
 /* ── Hero ── */
 .hero {
   position: relative;
-  padding: 8px 24px 40px;
+  padding: 62px 24px 40px;
   display: flex;
   align-items: center;
   justify-content: center;

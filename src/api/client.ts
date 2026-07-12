@@ -172,7 +172,26 @@ export const getFusionRequestStatus = (poke1: string, poke2: string): Promise<bo
 
 export async function toggleLike(artworkId: string): Promise<{ liked: boolean; like_count: number }> {
   const res = await api.post(`/artworks/${artworkId}/like`, {})
-  return res.data
+  const data = res.data
+
+  // Patch local cache so other views reflect the updated like count immediately
+  const cached = readFusionCache()
+  if (cached) {
+    let patched = false
+    Object.values(cached.fusions).forEach(artworks => {
+      const art = artworks.find(a => a.id === artworkId)
+      if (art) {
+        art.liked_by_me = data.liked
+        art.like_count = data.like_count
+        patched = true
+      }
+    })
+    if (patched) {
+      writeFusionCache(cached)
+    }
+  }
+
+  return data
 }
 
 // ── Analytics ─────────────────────────────────────────────

@@ -1,7 +1,6 @@
 .page {
   min-height: 100vh;
   /* background removed to allow body fixed gradient through */
-  padding-top: 54px;
   transition: background 0.3s;
 }
 
@@ -80,7 +79,7 @@
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  padding: 8px 16px 16px;
+  padding: 62px 16px 16px;
   max-width: 720px;
   margin: 0 auto;
 }
