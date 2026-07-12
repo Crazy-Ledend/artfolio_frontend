@@ -61,6 +61,35 @@ function AuthCallback() {
   )
 }
 
+function PageTransitions({ children }: { children: React.ReactNode }) {
+  const location = useLocation()
+  const [displayLocation, setDisplayLocation] = useState(location)
+  const [transitionStage, setTransitionStage] = useState('in')
+
+  useEffect(() => {
+    if (location.pathname !== displayLocation.pathname) {
+      setTransitionStage('out')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }, [location.pathname, displayLocation.pathname])
+
+  return (
+    <div
+      className={`page-transition ${transitionStage}`}
+      onAnimationEnd={() => {
+        if (transitionStage === 'out') {
+          setDisplayLocation(location)
+          setTransitionStage('in')
+        }
+      }}
+    >
+      <Routes location={displayLocation}>
+        {children}
+      </Routes>
+    </div>
+  )
+}
+
 function AppContent() {
   const [contactOpen, setContactOpen] = useState(false)
   const location = useLocation()
@@ -97,7 +126,7 @@ function AppContent() {
     <>
       <Navbar onContactOpen={handleOpenContact} />
       <div className="pt-0">
-        <Routes>
+        <PageTransitions>
           <Route path="/" element={<Gallery />} />
           <Route path="/stats" element={<Stats />} />
           <Route path="/collections" element={<Collections />} />
@@ -108,7 +137,7 @@ function AppContent() {
           <Route path="/collections/:id" element={<CollectionDetail />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
-        </Routes>
+        </PageTransitions>
       </div>
       <DevBadge />
       <footer style={{
