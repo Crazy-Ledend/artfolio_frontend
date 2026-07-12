@@ -227,10 +227,8 @@ export default function Gallery() {
         <div className={styles.dexBody}>
           <div className={styles.gridScreen}>
             {loading ? (
-              <div className={styles.grid}>
-                {[...Array(30)].map((_, i) => (
-                  <div key={i} className={styles.skeletonTile}></div>
-                ))}
+              <div className={styles.loadingWrap}>
+                <img src="https://archives.bulbagarden.net/media/upload/a/a2/Spr_2c_025.png?20150809004516" alt="Loading…" className={styles.loadingSpinner} />
               </div>
             ) : (
               <div className={styles.grid}>
