@@ -433,7 +433,7 @@ export default function FusionDetail() {
   if (loading) return (
     <div className={styles.page}>
       <div className={styles.loadingWrap}>
-        <img src="https://m.archives.bulbagarden.net/media/upload/a/a2/Spr_2c_025.png" alt="Loading…" className={styles.spinner} />
+        <img src="https://archives.bulbagarden.net/media/upload/a/a2/Spr_2c_025.png?20150809004516" alt="Loading…" className={styles.spinner} />
         <p className={styles.loadingText}>Loading…</p>
       </div>
     </div>
