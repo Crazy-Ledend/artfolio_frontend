@@ -85,8 +85,7 @@
   right: 0;
   bottom: 0;
   background: linear-gradient(135deg, var(--decor-spiral-1), var(--decor-spiral-3), var(--decor-spiral-2));
-  filter: blur(12px);
-  opacity: 0.6;
+  filter: blur(10px);
   border-radius: 12px;
   animation: unevenGlow 3s infinite alternate;
   z-index: 0;
@@ -94,23 +93,38 @@
 }
 
 @keyframes unevenGlow {
-  0% { transform: scale(1) translate(-2px, 2px); opacity: 0.5; }
-  50% { transform: scale(1.1) translate(2px, -1px); opacity: 0.7; }
-  100% { transform: scale(1.05) translate(-1px, -3px); opacity: 0.8; }
+  0% { transform: scale(1) translate(-2px, 2px); opacity: 0.25; }
+  50% { transform: scale(1.05) translate(2px, -1px); opacity: 0.45; }
+  100% { transform: scale(1.02) translate(-1px, -3px); opacity: 0.55; }
 }
 
 .reverseBtnGlowBorder {
   position: relative;
   z-index: 1;
-  border: 2px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5), inset 0 0 8px rgba(255, 255, 255, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3), inset 0 0 6px rgba(255, 255, 255, 0.3);
   animation: borderPulse 2s infinite alternate;
   background: var(--glass-bg);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s, box-shadow 0.2s;
+}
+
+.reverseBtnGlowBorder:hover {
+  transform: scale(1.08) translateY(-2px);
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), inset 0 0 12px rgba(255, 255, 255, 0.6);
+  color: var(--ink-900);
 }
 
 @keyframes borderPulse {
-  0% { border-color: rgba(255, 255, 255, 0.4); }
-  100% { border-color: rgba(255, 255, 255, 1); box-shadow: 0 0 15px rgba(255, 255, 255, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.8); }
+  0% { 
+    border-color: rgba(255, 255, 255, 0.3); 
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0); 
+  }
+  100% { 
+    border-color: rgba(255, 255, 255, 0.8); 
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.6), inset 0 0 8px rgba(255, 255, 255, 0.6); 
+    text-shadow: 0 0 6px rgba(255, 255, 255, 0.7); 
+  }
 }
 
 /* ── Hero ── */
